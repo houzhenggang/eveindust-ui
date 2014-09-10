@@ -19,29 +19,13 @@ Ext.define('EVEInDust.view.main.Main', {
         type: 'main'
     },
 
-    layout: {
-        type: 'border'
-    },
-
+    layout: 'fit',
     items: [{
-        xtype: 'panel',
-        bind: {
-            title: '{name}'
-        },
-        region: 'west',
-        html: '<ul><li>This area is commonly used for navigation, for example, using a "tree" component.</li></ul>',
-        width: 250,
-        split: true,
-        tbar: [{
-            text: 'Button',
-            handler: 'onClickButton'
-        }]
-    },{
-        region: 'center',
-        xtype: 'tabpanel',
-        items:[{
-            title: 'Tab 1',
-            html: '<h2>Content appropriate for the current navigation.</h2>'
-        }]
+        tbar:{
+            items: [{
+                text: 'Создание заказов',
+                handler: "onClickCreateOrdersButton"
+            }]
+        }
     }]
 });

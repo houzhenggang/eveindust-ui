@@ -7,9 +7,12 @@ Ext.define('EVEInDust.Application', {
     extend: 'Ext.app.Application',
     
     name: 'EVEInDust',
+    requires: [
+        'Ext.grid.Panel'
+    ],
 
     stores: [
-        // TODO: add global / shared stores here
+        'TradeHub'
     ],
     
     launch: function () {

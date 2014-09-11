@@ -23,8 +23,11 @@ Ext.define('EVEInDust.view.main.Main', {
     items: [{
         tbar:{
             items: [{
-                text: 'Создание заказов',
+                text: 'Создание Заказов',
                 handler: "onClickCreateOrdersButton"
+            },{
+                text: "Редактор Торговых Хабов",
+                handler: "onClickTradeHubEditorButton"
             }]
         }
     }]

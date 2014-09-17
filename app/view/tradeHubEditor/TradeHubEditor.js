@@ -5,12 +5,13 @@ Ext.define("EVEInDust.view.tradeHubEditor.TradeHubEditor",{
     requires: [
         'EVEInDust.view.tradeHubEditor.TradeHubEditorController',
         'EVEInDust.view.tradeHubEditor.TradeHubEditorModel',
-        'EVEInDust.view.tradeHubEditor.createHubForm.CreateHubForm'
+        'EVEInDust.view.tradeHubEditor.CreateWindow'
     ],
     controller: "TradeHubEditor",
     viewModel: {
         type: "TradeHubEditor"
     },
+    session: true,
     modal: true,
     items: [{
         xtype: 'grid',

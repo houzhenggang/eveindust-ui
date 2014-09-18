@@ -49,8 +49,11 @@ Ext.define("EVEInDust.view.orderCreator.OrderCreator",{
             flex: 1,
             tbar: {
                 items: [{
-                    text: "Добавить заказ",
+                    text: "Создать",
                     handler: "onClickCreateOrderButton"
+                },{
+                    text: "Удалить",
+                    handler: "onClickDeleteOrderButton"
                 }]
             },
             columns: [{
@@ -62,10 +65,25 @@ Ext.define("EVEInDust.view.orderCreator.OrderCreator",{
                 flex: 1,
                 dataIndex: "stationId",
                 renderer: function(value){
-                    return value;
+                    var record = Ext.getStore("TradeHubs").findRecord("stationId",value);
+
+                    if(record) {
+                        return record.get("name");
+                    } else {
+                        return value;
+                    }
                 },
                 editor: {
-                    allowBlank: false
+                    xtype: "combo",
+                    allowBlank: false,
+                    queryMode: 'local',
+                    bind: {
+                        store: "{hubs}"
+                    },
+                    displayField: 'name',
+                    valueField: 'stationId',
+                    forceSelection: true,
+                    typeAhead: true
                 }
             }]
         },{

@@ -40,6 +40,29 @@ Ext.define('EVEInDust.view.orderCreator.OrderCreatorController', {
     },
     onCancelEditOrderRow: function(editor,context) {
         context.grid.getStore().remove(context.record);
+    },
+    onClickDeleteOrderButton: function(){
+        var deletingMSG = Ext.MessageBox.show({
+            msg: 'Удаление заказа...',
+            width:300,
+            wait:true,
+            waitConfig: {interval:200},
+            animateTarget: 'mb7'
+        });
+        this.lookupReference("orders-grid").getSelection()[0].erase({
+            success: function(){
+                deletingMSG.close();
+            },
+            failure: function() {
+                deletingMSG.close();
+                Ext.Msg.show({
+                    title: "Ошибка",
+                    msg: "Удаление заказа не удалось",
+                    icon: Ext.Msg.ERROR,
+                    buttons: Ext.Msg.OK
+                });
+            }
+        });
     }
     
 });

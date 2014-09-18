@@ -15,20 +15,11 @@ Ext.define('EVEInDust.view.orderCreator.OrderCreatorController', {
         rowEditor.startEdit(record,0);
     },
     onEditOrderRowComplete: function(editor, context) {
-        var savingMSG = Ext.MessageBox.show({
-            msg: 'Сохранение...',
-            width:300,
-            wait:true,
-            waitConfig: {interval:200},
-            animateTarget: 'mb7'
-        });
         context.record.save({
             success: function(){
-                savingMSG.close();
                 context.record.commit();
             },
             failure: function(){
-                savingMSG.close();
                 Ext.Msg.show({
                     title: "Ошибка",
                     msg: "Сохранение записи не удалось",
@@ -39,7 +30,9 @@ Ext.define('EVEInDust.view.orderCreator.OrderCreatorController', {
         });
     },
     onCancelEditOrderRow: function(editor,context) {
-        context.grid.getStore().remove(context.record);
+        if(context.record.phantom) {
+            context.grid.getStore().remove(context.record);
+        }
     },
     onClickDeleteOrderButton: function(){
         var deletingMSG = Ext.MessageBox.show({

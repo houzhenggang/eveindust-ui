@@ -18,26 +18,42 @@ Ext.define("EVEInDust.view.tradeHubEditor.TradeHubEditor",{
     },
     width: 400,
     height: 400,
-    session: true,
-    modal: true,
     items: [{
         xtype: 'grid',
         flex: 1,
         store: "TradeHubs",
+        reference: "hubs-grid",
+        plugins: [{
+            ptype: 'rowediting',
+            clicksToEdit: 2,
+            listeners: {
+                edit: 'onEditRowComplete',
+                canceledit: 'onCancelEditRow'
+            }
+        }],
         tbar: {
             items: [{
                 text: "Создать",
                 handler: "onClickCreateTradeHubButton"
+            },{
+                text: "Удалить",
+                handler: "onClickDeleteTradeHubButton"
             }]
         },
         columns: [{
             header: "StationID",
             dataIndex: "stationId",
-            flex: 1
+            flex: 1,
+            editor: {
+                allowBlank: false
+            }
         },{
             header: "Название",
             dataIndex: "name",
-            flex: 2
+            flex: 2,
+            editor: {
+                allowBlank: false
+            }
         }]
     }]
 

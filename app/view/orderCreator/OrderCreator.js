@@ -90,6 +90,13 @@ Ext.define("EVEInDust.view.orderCreator.OrderCreator",{
             xtype: "grid",
             title: "Предметы для произв-ва",
             flex: 2,
+            tbar: {
+                items:[{
+                    text: "Создать"
+                },{
+                    text: "Удалить"
+                }]
+            },
             columns: [{
                 header: "#"
             },{

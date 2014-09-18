@@ -4,21 +4,42 @@ Ext.define('EVEInDust.view.orderCreator.OrderCreatorController', {
         "EVEInDust.model.Order"
     ],
     alias: 'controller.OrderCreator',
-
-    init: function(){
-        console.log(this.getViewModel().getStore('orders'));
-        this.getViewModel().getStore('orders');
-    },
     onClickCreateOrderButton: function(){
         var ordersGrid = this.lookupReference("orders-grid"),
             record = new EVEInDust.model.Order(),
-            rowEditor = ordersGrid.findPlugin("rowediting")
+            rowEditor = ordersGrid.findPlugin("rowediting"),
+            store = ordersGrid.getStore()
         ;
-        ordersGrid.insert(0, record);
+        record.setStatus(Ext.getStore("OrderStatuses").getById(1));
+        store.insert(0, [record]);
         rowEditor.startEdit(record,0);
     },
-    onEditOrderRowComplete: function() {
-
+    onEditOrderRowComplete: function(editor, context) {
+        var savingMSG = Ext.MessageBox.show({
+            msg: 'Сохранение...',
+            width:300,
+            wait:true,
+            waitConfig: {interval:200},
+            animateTarget: 'mb7'
+        });
+        context.record.save({
+            success: function(){
+                savingMSG.close();
+                context.record.commit();
+            },
+            failure: function(){
+                savingMSG.close();
+                Ext.Msg.show({
+                    title: "Ошибка",
+                    msg: "Сохранение записи не удалось",
+                    icon: Ext.Msg.ERROR,
+                    buttons: Ext.Msg.OK
+                });
+            }
+        });
+    },
+    onCancelEditOrderRow: function(editor,context) {
+        context.grid.getStore().remove(context.record);
     }
     
 });

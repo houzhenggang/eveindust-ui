@@ -8,7 +8,6 @@ Ext.define('EVEInDust.Application', {
 
     stores: [
         'TradeHubs',
-        "OrderStatuses",
-        "Orders"
+        "OrderStatuses"
     ]
 });

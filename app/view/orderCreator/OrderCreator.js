@@ -3,8 +3,7 @@ Ext.define("EVEInDust.view.orderCreator.OrderCreator",{
     extend: "Ext.window.Window",
     requires: [
         'EVEInDust.view.orderCreator.OrderCreatorController',
-        'EVEInDust.view.orderCreator.OrderCreatorModel',
-        "EVEInDust.store.Orders"
+        'EVEInDust.view.orderCreator.OrderCreatorModel'
     ],
     xtype: "OrderCreator",
     controller: "OrderCreator",
@@ -12,7 +11,7 @@ Ext.define("EVEInDust.view.orderCreator.OrderCreator",{
         type: "OrderCreator"
     },
 
-    width: 400,
+    width: 700,
     height: 400,
 
     closable: true,
@@ -37,10 +36,16 @@ Ext.define("EVEInDust.view.orderCreator.OrderCreator",{
                 ptype: 'rowediting',
                 clicksToEdit: 2,
                 listeners: {
-                    edit: 'onEditOrderRowComplete'
+                    edit: 'onEditOrderRowComplete',
+                    canceledit: 'onCancelEditOrderRow'
                 }
             }],
-            store: "Orders",
+            store: {
+                model: 'EVEInDust.model.Order',
+                remoteSort: true,
+                remoteFilter: true,
+                autoLoad: true
+            },
             flex: 1,
             tbar: {
                 items: [{
@@ -57,10 +62,11 @@ Ext.define("EVEInDust.view.orderCreator.OrderCreator",{
                 flex: 1,
                 dataIndex: "stationId",
                 renderer: function(value){
-                    console.log(this.getViewModel());
                     return value;
+                },
+                editor: {
+                    allowBlank: false
                 }
-
             }]
         },{
             xtype: "grid",

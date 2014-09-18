@@ -2,13 +2,17 @@ Ext.define("EVEInDust.model.TradeHub", {
     extend: "Ext.data.Model",
     uses: [
     ],
-    idProperty: "stationId",
+    idProperty: "id",
     fields: [
         {
-                name: "stationId",            
+                name: "id",            
                 type: "int",            
                 useNull: true,            
                 persist: false            
+        },
+        {
+                name: "stationId",            
+                type: "int"            
         },
         {
                 name: "name",            
@@ -16,6 +20,10 @@ Ext.define("EVEInDust.model.TradeHub", {
         }
     ],
     validations: [
+        {
+            type: "presence",
+            field: "stationId"
+        },
         {
             type: "presence",
             field: "name"

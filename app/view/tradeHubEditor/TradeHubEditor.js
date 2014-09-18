@@ -12,10 +12,17 @@ Ext.define("EVEInDust.view.tradeHubEditor.TradeHubEditor",{
     viewModel: {
         type: "TradeHubEditor"
     },
+    layout: {
+        type: "hbox",
+        align: "stretch"
+    },
+    width: 400,
+    height: 400,
     session: true,
     modal: true,
     items: [{
         xtype: 'grid',
+        flex: 1,
         store: "TradeHubs",
         tbar: {
             items: [{
@@ -24,9 +31,13 @@ Ext.define("EVEInDust.view.tradeHubEditor.TradeHubEditor",{
             }]
         },
         columns: [{
-            header: "StationID"
+            header: "StationID",
+            dataIndex: "stationId",
+            flex: 1
         },{
-            header: "Название"
+            header: "Название",
+            dataIndex: "name",
+            flex: 2
         }]
     }]
 

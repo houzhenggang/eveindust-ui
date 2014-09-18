@@ -10,16 +10,16 @@ Ext.define("EVEInDust.view.tradeHubEditor.CreateWindow",{
         bodyPadding: 5,
         items: [{
             fieldLabel: "Название",
+            name: "name",
             xtype: "textfield",
-            bind: '{hub.name}',
             allowBlank: false
         },{
             fieldLabel: "StationID",
+            name: "stationId",
             xtype: "numberfield",
             minValue: 0,
             allowDecimals: false,
-            allowBlank: false,
-            bind: "{hub.stationId}"
+            allowBlank: false
         }],
         buttons: [{
             text: "Отмена",

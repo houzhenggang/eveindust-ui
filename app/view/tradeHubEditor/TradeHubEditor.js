@@ -5,7 +5,8 @@ Ext.define("EVEInDust.view.tradeHubEditor.TradeHubEditor",{
     requires: [
         'EVEInDust.view.tradeHubEditor.TradeHubEditorController',
         'EVEInDust.view.tradeHubEditor.TradeHubEditorModel',
-        'EVEInDust.view.tradeHubEditor.CreateWindow'
+        'EVEInDust.view.tradeHubEditor.CreateWindow',
+        "EVEInDust.store.TradeHubs"
     ],
     controller: "TradeHubEditor",
     viewModel: {
@@ -15,6 +16,7 @@ Ext.define("EVEInDust.view.tradeHubEditor.TradeHubEditor",{
     modal: true,
     items: [{
         xtype: 'grid',
+        store: "TradeHubs",
         tbar: {
             items: [{
                 text: "Создать",

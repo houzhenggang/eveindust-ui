@@ -7,25 +7,29 @@ Ext.define('EVEInDust.view.tradeHubEditor.TradeHubEditorController', {
         });
 
         this.createForm.show();
-        //this.createForm.
     },
     onClickSaveHubButton: function() {
         var formPanel = this.createForm.down('form'),
-            form = formPanel.getForm();
+            form = formPanel.getForm(),
+            record,
+            me = this
+        ;
 
         if(form.isValid()) {
-
-            var record = this.lookupSession().createRecord(EVEInDust.model.TradeHub);
+            record = new EVEInDust.model.TradeHub();
             form.updateRecord(record);
-            console.log(record);
-
-            this.getView().remove(this.createForm);
-            this.createForm = null;
-
+            //record.save({
+            //    callback: function(){
+                    me.getViewModel().getStore("tradehubToGrid").add(record);
+                    me.closeCreateForm();
+            //    }
+            //});
         }
-
     },
     onClickCancelButton: function(){
+        this.closeCreateForm();
+    },
+    closeCreateForm: function(){
         this.getView().remove(this.createForm);
         this.createForm = null;
     }

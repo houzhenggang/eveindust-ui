@@ -12,7 +12,7 @@ Ext.define('EVEInDust.Application', {
     ],
 
     stores: [
-        'TradeHub'
+        'TradeHubs'
     ],
     
     launch: function () {

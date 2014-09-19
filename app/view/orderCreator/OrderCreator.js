@@ -3,7 +3,8 @@ Ext.define("EVEInDust.view.orderCreator.OrderCreator",{
     extend: "Ext.window.Window",
     requires: [
         'EVEInDust.view.orderCreator.OrderCreatorController',
-        'EVEInDust.view.orderCreator.OrderCreatorModel'
+        'EVEInDust.view.orderCreator.OrderCreatorModel',
+        "EVEInDust.model.ItemToProduce"
     ],
     xtype: "OrderCreator",
     controller: "OrderCreator",
@@ -56,6 +57,9 @@ Ext.define("EVEInDust.view.orderCreator.OrderCreator",{
                     handler: "onClickDeleteOrderButton"
                 }]
             },
+            listeners: {
+                itemclick: "OnItemClickInOrdersGrid"
+            },
             columns: [{
                 header: "#",
                 flex: 25/100,
@@ -90,19 +94,47 @@ Ext.define("EVEInDust.view.orderCreator.OrderCreator",{
             xtype: "grid",
             title: "Предметы для произв-ва",
             flex: 2,
+            reference: "itemtoproduce-grid",
+            store: {
+                model: 'EVEInDust.model.ItemToProduce',
+                remoteSort: true,
+                remoteFilter: true
+            },
+            plugins: [{
+                ptype: 'rowediting',
+                clicksToEdit: 2,
+                listeners: {
+                    edit: 'onEditItemToProduceRowComplete',
+                    canceledit: 'onCancelEditItemToProduceRow'
+                }
+            }],
             tbar: {
                 items:[{
-                    text: "Создать"
+                    text: "Создать",
+                    handler: "onClickCreateItemToProduceItem"
                 },{
-                    text: "Удалить"
+                    text: "Удалить",
+                    handler: "onClickDeleteItemToProduceItem"
                 }]
             },
             columns: [{
-                header: "#"
+                header: "#",
+                dataIndex: "id"
             },{
-                header: "Название"
+                header: "Название",
+                dataIndex: "typeId",
+                renderer: function(value) {
+                    return value;
+                },
+                editor: {
+                    allowBlank: false
+                }
             },{
-                header: "План"
+                header: "План",
+                dataIndex: "count",
+                editor: {
+                    allowBlank: false
+                }
             },{
                 header: "В произв-ве"
             }]

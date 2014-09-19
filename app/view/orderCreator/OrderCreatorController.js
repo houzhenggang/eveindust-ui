@@ -1,61 +1,42 @@
 Ext.define('EVEInDust.view.orderCreator.OrderCreatorController', {
     extend: 'Ext.app.ViewController',
     requires: [
-        "EVEInDust.model.Order"
+        "EVEInDust.model.Order",
+        "EVEInDust.Common"
     ],
     alias: 'controller.OrderCreator',
     onClickCreateOrderButton: function(){
         var ordersGrid = this.lookupReference("orders-grid"),
-            record = new EVEInDust.model.Order(),
-            rowEditor = ordersGrid.findPlugin("rowediting"),
-            store = ordersGrid.getStore()
+            record = new EVEInDust.model.Order()
         ;
         record.setStatus(Ext.getStore("OrderStatuses").getById(1));
-        store.insert(0, [record]);
-        rowEditor.startEdit(record,0);
+        ordersGrid.getStore().insert(0, [record]);
+        ordersGrid.findPlugin("rowediting").startEdit(record,0);
     },
-    onEditOrderRowComplete: function(editor, context) {
-        context.record.save({
-            success: function(){
-                context.record.commit();
-            },
-            failure: function(){
-                Ext.Msg.show({
-                    title: "Ошибка",
-                    msg: "Сохранение записи не удалось",
-                    icon: Ext.Msg.ERROR,
-                    buttons: Ext.Msg.OK
-                });
-            }
-        });
-    },
-    onCancelEditOrderRow: function(editor,context) {
-        if(context.record.phantom) {
-            context.grid.getStore().remove(context.record);
-        }
-    },
+    onEditOrderRowComplete: EVEInDust.Common.onEditModelRowComplete(),
+    onCancelEditOrderRow: EVEInDust.Common.onCancelEditModelRow,
     onClickDeleteOrderButton: function(){
-        var deletingMSG = Ext.MessageBox.show({
-            msg: 'Удаление заказа...',
-            width:300,
-            wait:true,
-            waitConfig: {interval:200},
-            animateTarget: 'mb7'
+        EVEInDust.Common.deleteSelectedItemInGrid(this.lookupReference("orders-grid"),"Удаление заказа не удалось");
+    },
+    OnItemClickInOrdersGrid: function(ordersGrid, record){
+        this.lookupReference("itemtoproduce-grid").getStore().addFilter({
+            id: "order",
+            property: "order",
+            value: record.getId()
         });
-        this.lookupReference("orders-grid").getSelection()[0].erase({
-            success: function(){
-                deletingMSG.close();
-            },
-            failure: function() {
-                deletingMSG.close();
-                Ext.Msg.show({
-                    title: "Ошибка",
-                    msg: "Удаление заказа не удалось",
-                    icon: Ext.Msg.ERROR,
-                    buttons: Ext.Msg.OK
-                });
-            }
-        });
-    }
+    },
+    onClickCreateItemToProduceItem: function(){
+        var itemToProducesGrid = this.lookupReference("itemtoproduce-grid"),
+            itemToProduce = new EVEInDust.model.ItemToProduce()
+        ;
+        itemToProduce.setOrder(this.lookupReference("orders-grid").getSelection()[0]);
+        itemToProducesGrid.getStore().insert(0, [itemToProduce]);
+        itemToProducesGrid.findPlugin("rowediting").startEdit(itemToProduce,0);
+    },
+    onClickDeleteItemToProduceItem: function(){
+        EVEInDust.Common.deleteSelectedItemInGrid(this.lookupReference("itemtoproduce-grid"),"Удаление товара для производства не удалось");
+    },
+    onCancelEditItemToProduceRow: EVEInDust.Common.onCancelEditModelRow,
+    onEditItemToProduceRowComplete: EVEInDust.Common.onEditModelRowComplete()
     
 });

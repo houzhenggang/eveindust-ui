@@ -54,7 +54,7 @@ Ext.define("EVEInDust.view.orderCreator.OrderCreator",{
                     text: "Удалить",
                     handler: "onClickDeleteOrderButton"
                 },{
-                    text: "Закарть"
+                    text: "Закрыть"
                 }]
             },
             listeners: {
@@ -139,7 +139,7 @@ Ext.define("EVEInDust.view.orderCreator.OrderCreator",{
                 header: "В произв-ве"
             }],
             listeners: {
-                itemclick: "OnItemClickInItemToProduceGrid"
+                itemclick: "onItemClickInItemToProduceGrid"
             }
         }]
     },{
@@ -178,7 +178,8 @@ Ext.define("EVEInDust.view.orderCreator.OrderCreator",{
         reference: "notAssociatedJobs-grid",
         tbar: {
             items:[{
-                text: "Привязать"
+                text: "Привязать",
+                handler: "onClickAssociateJobToProducingItemButton"
             }]
         },
         store: {

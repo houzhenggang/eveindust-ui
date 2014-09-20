@@ -38,7 +38,7 @@ Ext.define('EVEInDust.view.orderCreator.OrderCreatorController', {
     },
     onCancelEditItemToProduceRow: EVEInDust.Common.onCancelEditModelRow,
     onEditItemToProduceRowComplete: EVEInDust.Common.onEditModelRowComplete(),
-    OnItemClickInItemToProduceGrid: function(grid, itemToProduce){
+    onItemClickInItemToProduceGrid: function(grid, itemToProduce){
         this.lookupReference("associatedJobs-grid").getStore().addFilter({
             id: "itemToProduce",
             property: "itemToProduce",
@@ -49,7 +49,26 @@ Ext.define('EVEInDust.view.orderCreator.OrderCreatorController', {
             property: "productTypeId",
             value: itemToProduce.get("typeId")
         });
-
+    },
+    onClickAssociateJobToProducingItemButton: function (button) {
+        var association,
+            notAssociatedJobsGrid = this.lookupReference("notAssociatedJobs-grid"),
+            me = this
+        ;
+        button.disable();
+        association = new EVEInDust.model.IndJobToProducingItemAssociation();
+        association.setItemToProduce(this.lookupReference("itemtoproduce-grid").getSelection()[0]);
+        association.set("jobId",notAssociatedJobsGrid.getSelection()[0].get("jobId"));
+        
+        association.save({
+            success: function () {
+                notAssociatedJobsGrid.getStore().load();
+                me.lookupReference("associatedJobs-grid").getStore().load();
+            },
+            callback: function () {
+                button.enable();
+            }
+        });
     }
     
 });

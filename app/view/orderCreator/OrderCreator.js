@@ -140,12 +140,16 @@ Ext.define("EVEInDust.view.orderCreator.OrderCreator",{
                 }
             },{
                 header: "В произв-ве"
-            }]
+            }],
+            listeners: {
+                itemclick: "OnItemClickInItemToProduceGrid"
+            }
         }]
     },{
         xtype: "grid",
         flex: 1,
         title: "Привязанные работы",
+        reference: "associatedJobs-grid",
         store: {
             model: 'EVEInDust.model.yapeal.CorpIndustryJob',
             remoteSort: true,

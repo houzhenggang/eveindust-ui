@@ -18,11 +18,11 @@ Ext.define('EVEInDust.view.orderCreator.OrderCreatorController', {
     onClickDeleteOrderButton: function(){
         EVEInDust.Common.deleteSelectedItemInGrid(this.lookupReference("orders-grid"),"Удаление заказа не удалось");
     },
-    OnItemClickInOrdersGrid: function(ordersGrid, record){
+    OnItemClickInOrdersGrid: function(ordersGrid, order){
         this.lookupReference("itemtoproduce-grid").getStore().addFilter({
             id: "order",
             property: "order",
-            value: record.getId()
+            value: order.getId()
         });
     },
     onClickCreateItemToProduceItem: function(){
@@ -37,6 +37,13 @@ Ext.define('EVEInDust.view.orderCreator.OrderCreatorController', {
         EVEInDust.Common.deleteSelectedItemInGrid(this.lookupReference("itemtoproduce-grid"),"Удаление товара для производства не удалось");
     },
     onCancelEditItemToProduceRow: EVEInDust.Common.onCancelEditModelRow,
-    onEditItemToProduceRowComplete: EVEInDust.Common.onEditModelRowComplete()
+    onEditItemToProduceRowComplete: EVEInDust.Common.onEditModelRowComplete(),
+    OnItemClickInItemToProduceGrid: function(grid, itemToProduce){
+        this.lookupReference("associatedJobs-grid").getStore().addFilter({
+            id: "itemToProduce",
+            property: "itemToProduce",
+            value: itemToProduce.getId()
+        });
+    }
     
 });

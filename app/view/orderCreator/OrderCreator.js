@@ -56,6 +56,8 @@ Ext.define("EVEInDust.view.orderCreator.OrderCreator",{
                 },{
                     text: "Удалить",
                     handler: "onClickDeleteOrderButton"
+                },{
+                    text: "Закарть"
                 }]
             },
             listeners: {

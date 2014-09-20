@@ -7,21 +7,19 @@ Ext.define("EVEInDust.view.orderCreator.OrderCreator",{
         "EVEInDust.model.ItemToProduce",
         "EVEInDust.model.yapeal.CorpIndustryJob"
     ],
+    title: "Формирование заказа",
     xtype: "OrderCreator",
     controller: "OrderCreator",
     viewModel: {
         type: "OrderCreator"
     },
-
     width: 700,
     height: 400,
-
     closable: true,
     layout: {
         type: "vbox",
         align: "stretch"
     },
-
     items: [{
         xtype: "panel",
         flex: 1,
@@ -29,7 +27,6 @@ Ext.define("EVEInDust.view.orderCreator.OrderCreator",{
             type: 'hbox',
             align: 'stretch'
         },
-
         items: [{
             xtype: "grid",
             title: "Заказы",
@@ -178,12 +175,22 @@ Ext.define("EVEInDust.view.orderCreator.OrderCreator",{
         xtype: "grid",
         flex: 1,
         title: "Непривязанные работы",
+        reference: "notAssociatedJobs-grid",
+        tbar: {
+            items:[{
+                text: "Привязать"
+            }]
+        },
         store: {
             model: 'EVEInDust.model.yapeal.CorpIndustryJob',
             remoteSort: true,
-            remoteFilter: true,
-            autoLoad: true
+            remoteFilter: true
         },
+        dockedItems: [{
+            xtype: 'pagingtoolbar',
+            dock: 'bottom',
+            displayInfo: true
+        }],
         columns: [{
             header: "#",
             dataIndex: "jobId",
@@ -200,6 +207,10 @@ Ext.define("EVEInDust.view.orderCreator.OrderCreator",{
         listeners: {
             afterrender: function(grid) {
                 EVEInDust.Common.changeUrlOfProxyInStore(grid.getStore(),"/api/yapeal/notassociatedcorpindustryjobs");
+
+                // я привязываю хранилище тут, потому что не знаю как привязать его другим способом, если настройки хранилища
+                // таблицы указывать прямо в самой таблице...
+                this.getDockedItems("pagingtoolbar")[0].bindStore(this.getStore());
             }
         }
     }]

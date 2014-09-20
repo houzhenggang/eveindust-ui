@@ -44,6 +44,12 @@ Ext.define('EVEInDust.view.orderCreator.OrderCreatorController', {
             property: "itemToProduce",
             value: itemToProduce.getId()
         });
+        this.lookupReference("notAssociatedJobs-grid").getStore().addFilter({
+            id: "productTypeId",
+            property: "productTypeId",
+            value: itemToProduce.get("typeId")
+        });
+
     }
     
 });

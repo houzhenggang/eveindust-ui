@@ -4,7 +4,8 @@ Ext.define("EVEInDust.view.orderCreator.OrderCreator",{
     requires: [
         'EVEInDust.view.orderCreator.OrderCreatorController',
         'EVEInDust.view.orderCreator.OrderCreatorModel',
-        "EVEInDust.model.ItemToProduce"
+        "EVEInDust.model.ItemToProduce",
+        "EVEInDust.model.yapeal.CorpIndustryJob"
     ],
     xtype: "OrderCreator",
     controller: "OrderCreator",
@@ -142,15 +143,24 @@ Ext.define("EVEInDust.view.orderCreator.OrderCreator",{
     },{
         xtype: "grid",
         flex: 1,
+        store: {
+            model: 'EVEInDust.model.yapeal.CorpIndustryJob',
+            remoteSort: true,
+            remoteFilter: true,
+            autoLoad: "true"
+        },
         title: "Список непривязанных работ",
         columns: [{
             header: "#",
+            dataIndex: "jobId",
             flex: 1
         },{
             header: "Название",
+            dataIndex: "productTypeName",
             flex: 2
         },{
             header: "Дата",
+            dataIndex: "startDate",
             flex: 1
         }]
     }]

@@ -42,5 +42,17 @@ Ext.define("EVEInDust.Common",{
                 }
             });
         }
+    },
+    /**
+     * Я не знаю как точно и правильно эта функция работает, но она делает именно то, что ожидается, и пока без посторонних эффектов
+     * @param store
+     * @param url
+     * @param [type]
+     */
+    changeUrlOfProxyInStore: function(store, url, type) {
+        var config = store.getProxy().getConfig();
+        config.url = url;
+        config.type = type || "rest";
+        store.setProxy(config);
     }
 },null);

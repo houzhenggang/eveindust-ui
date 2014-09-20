@@ -145,13 +145,13 @@ Ext.define("EVEInDust.view.orderCreator.OrderCreator",{
     },{
         xtype: "grid",
         flex: 1,
+        title: "Привязанные работы",
         store: {
             model: 'EVEInDust.model.yapeal.CorpIndustryJob',
             remoteSort: true,
             remoteFilter: true,
-            autoLoad: "true"
+            autoLoad: true
         },
-        title: "Список непривязанных работ",
         columns: [{
             header: "#",
             dataIndex: "jobId",
@@ -164,6 +164,39 @@ Ext.define("EVEInDust.view.orderCreator.OrderCreator",{
             header: "Дата",
             dataIndex: "startDate",
             flex: 1
-        }]
+        }],
+        listeners: {
+            afterrender: function(grid) {
+                EVEInDust.Common.changeUrlOfProxyInStore(grid.getStore(),"/api/yapeal/associatedcorpindustryjobs");
+            }
+        }
+    },{
+        xtype: "grid",
+        flex: 1,
+        title: "Непривязанные работы",
+        store: {
+            model: 'EVEInDust.model.yapeal.CorpIndustryJob',
+            remoteSort: true,
+            remoteFilter: true,
+            autoLoad: true
+        },
+        columns: [{
+            header: "#",
+            dataIndex: "jobId",
+            flex: 1
+        },{
+            header: "Название",
+            dataIndex: "productTypeName",
+            flex: 2
+        },{
+            header: "Дата",
+            dataIndex: "startDate",
+            flex: 1
+        }],
+        listeners: {
+            afterrender: function(grid) {
+                EVEInDust.Common.changeUrlOfProxyInStore(grid.getStore(),"/api/yapeal/notassociatedcorpindustryjobs");
+            }
+        }
     }]
 });

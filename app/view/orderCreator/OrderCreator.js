@@ -146,12 +146,17 @@ Ext.define("EVEInDust.view.orderCreator.OrderCreator",{
         xtype: "grid",
         flex: 1,
         title: "Привязанные работы",
+        tbar: {
+            items:[{
+                text: "Отвязать",
+                handler: "onClickDisassociateJobFromProducingItemButton"
+            }]
+        },
         reference: "associatedJobs-grid",
         store: {
             model: 'EVEInDust.model.yapeal.CorpIndustryJob',
             remoteSort: true,
-            remoteFilter: true,
-            autoLoad: true
+            remoteFilter: true
         },
         columns: [{
             header: "#",

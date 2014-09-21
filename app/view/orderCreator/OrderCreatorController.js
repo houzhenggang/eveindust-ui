@@ -73,6 +73,58 @@ Ext.define('EVEInDust.view.orderCreator.OrderCreatorController', {
                 button.enable();
             }
         });
+    },
+    onClickDisassociateJobFromProducingItemButton: function(button) {
+        var store,
+            me = this,
+            associatedJobsGrid = this.lookupReference("associatedJobs-grid")
+        ;
+        button.disable();
+        associatedJobsGrid.setLoading(true);
+
+        store = Ext.create(Ext.data.Store,{
+            model: 'EVEInDust.model.IndJobToProducingItemAssociation',
+            remoteFilter: true,
+            filters: [{
+                id: "jobId",
+                property: "jobId",
+                value: associatedJobsGrid.getSelection()[0].get("jobId")
+            }]
+        });
+        store.load(function (records, operation, success) {
+            if(success) {
+                records[0].erase({
+                    success: function () {
+                        associatedJobsGrid.setLoading(false);
+                        associatedJobsGrid.getStore().load();
+                        me.lookupReference("notAssociatedJobs-grid").getStore().load()
+                    },
+                    failure: function () {
+                        Ext.Msg.show({
+                            title: "Ошибка",
+                            msg: "Не удалось отвязать работу",
+                            icon: Ext.Msg.ERROR,
+                            buttons: Ext.Msg.OK
+                        });
+                        associatedJobsGrid.setLoading(false);
+                    },
+                    callback: function () {
+                        button.enable();
+
+                    }
+                });
+            } else {
+                button.enable();
+                associatedJobsGrid.setLoading(false);
+                Ext.Msg.show({
+                    title: "Ошибка",
+                    msg: "Не удалось загрузить данные для отвязывания работы",
+                    icon: Ext.Msg.ERROR,
+                    buttons: Ext.Msg.OK
+                });
+            }
+        }
+    );
     }
     
 });

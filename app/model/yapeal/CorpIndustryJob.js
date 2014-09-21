@@ -1,130 +1,129 @@
 Ext.define("EVEInDust.model.yapeal.CorpIndustryJob", {
     extend: "Ext.data.Model",
-    uses: [
-    ],
+    uses: [],
     idProperty: "jobId",
     fields: [
         {
-                name: "activityId",            
-                type: "boolean"            
+            name: "activityId",
+            type: "boolean"
         },
         {
-                name: "blueprintId",            
-                type: "int"            
+            name: "blueprintId",
+            type: "int"
         },
         {
-                name: "blueprintLocationId",            
-                type: "int"            
+            name: "blueprintLocationId",
+            type: "int"
         },
         {
-                name: "blueprintTypeId",            
-                type: "int"            
+            name: "blueprintTypeId",
+            type: "int"
         },
         {
-                name: "blueprintTypeName",            
-                type: "string"            
+            name: "blueprintTypeName",
+            type: "string"
         },
         {
-                name: "completedCharacterId",            
-                type: "int"            
+            name: "completedCharacterId",
+            type: "int"
         },
         {
-                name: "completedDate",            
-                type: "date",            
-                dateFormat: "Y-m-d\\TH:i:sO"            
+            name: "completedDate",
+            type: "date",
+            dateFormat: "Y-m-d\\TH:i:sO"
         },
         {
-                name: "cost",            
-                type: "float"            
+            name: "cost",
+            type: "float"
         },
         {
-                name: "endDate",            
-                type: "date",            
-                dateFormat: "Y-m-d\\TH:i:sO"            
+            name: "endDate",
+            type: "date",
+            dateFormat: "Y-m-d\\TH:i:sO"
         },
         {
-                name: "facilityId",            
-                type: "int"            
+            name: "facilityId",
+            type: "int"
         },
         {
-                name: "installerId",            
-                type: "int"            
+            name: "installerId",
+            type: "int"
         },
         {
-                name: "installerName",            
-                type: "string",            
-                useNull: true            
+            name: "installerName",
+            type: "string",
+            useNull: true
         },
         {
-                name: "licensedRuns",            
-                type: "int"            
+            name: "licensedRuns",
+            type: "int"
         },
         {
-                name: "outputLocationId",            
-                type: "int"            
+            name: "outputLocationId",
+            type: "int"
         },
         {
-                name: "pauseDate",            
-                type: "date",            
-                dateFormat: "Y-m-d\\TH:i:sO"            
+            name: "pauseDate",
+            type: "date",
+            dateFormat: "Y-m-d\\TH:i:sO"
         },
         {
-                name: "probability",            
-                type: "string",            
-                useNull: true            
+            name: "probability",
+            type: "string",
+            useNull: true
         },
         {
-                name: "productTypeId",            
-                type: "int"            
+            name: "productTypeId",
+            type: "int"
         },
         {
-                name: "productTypeName",            
-                type: "string"            
+            name: "productTypeName",
+            type: "string"
         },
         {
-                name: "runs",            
-                type: "int"            
+            name: "runs",
+            type: "int"
         },
         {
-                name: "solarSystemId",            
-                type: "int"            
+            name: "solarSystemId",
+            type: "int"
         },
         {
-                name: "solarSystemName",            
-                type: "string"            
+            name: "solarSystemName",
+            type: "string"
         },
         {
-                name: "startDate",            
-                type: "date",            
-                dateFormat: "Y-m-d\\TH:i:sO"            
+            name: "startDate",
+            type: "date",
+            dateFormat: "Y-m-d\\TH:i:sO"
         },
         {
-                name: "stationId",            
-                type: "int"            
+            name: "stationId",
+            type: "int"
         },
         {
-                name: "status",            
-                type: "int"            
+            name: "status",
+            type: "int"
         },
         {
-                name: "teamId",            
-                type: "int"            
+            name: "teamId",
+            type: "int"
         },
         {
-                name: "timeInSeconds",            
-                type: "int"            
+            name: "timeInSeconds",
+            type: "int"
         },
         {
-                name: "ownerId",            
-                type: "int",            
-                useNull: true,            
-                persist: false            
+            name: "ownerId",
+            type: "int",
+            useNull: true,
+            persist: false
         },
         {
-                name: "jobId",            
-                type: "int",            
-                useNull: true,            
-                persist: false            
+            name: "jobId",
+            type: "int",
+            useNull: true,
+            persist: false
         }
     ],
     validations: [
@@ -233,7 +232,12 @@ Ext.define("EVEInDust.model.yapeal.CorpIndustryJob", {
             field: "timeInSeconds"
         }
     ],
-    associations: [
-    ],
-    proxy: {"type":"rest","url":"/api/yapeal/corpindustryjobs","actionMethods":{"update":"PATCH","read":"GET","create":"POST","destroy":"DELETE"},"reader":{"rootProperty":"data","type":"json","messageProperty":"message"},"writer":{"type":"json","writeRecordId":false,"writeAllFields":false,"dateFormat":"Y-m-d\\TH:i:sO"}}
+    associations: [],
+    proxy: {
+        "type": "rest",
+        "url": "/api/yapeal/corpindustryjobs",
+        "actionMethods": {"update": "PATCH", "read": "GET", "create": "POST", "destroy": "DELETE"},
+        "reader": {"rootProperty": "data", "type": "json", "messageProperty": "message"},
+        "writer": {"type": "json", "writeRecordId": false, "writeAllFields": false, "dateFormat": "Y-m-d\\TH:i:sO"}
+    }
 });

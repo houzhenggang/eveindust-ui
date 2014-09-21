@@ -48,6 +48,10 @@ Ext.define('EVEInDust.view.orderCreator.OrderCreatorController', {
             id: "productTypeId",
             property: "productTypeId",
             value: itemToProduce.get("typeId")
+        },{
+            id: "activityId",
+            property: "activityId",
+            value: EVEInDust.common.IndustryActivity.Manufacturing
         });
     },
     onClickAssociateJobToProducingItemButton: function (button) {

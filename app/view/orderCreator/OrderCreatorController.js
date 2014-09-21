@@ -82,6 +82,7 @@ Ext.define('EVEInDust.view.orderCreator.OrderCreatorController', {
         button.disable();
         associatedJobsGrid.setLoading(true);
 
+        // Я пока не знаю как загрузить необходимую сущность по-другому... реализовывать аякс запрос мне не очень хочется, так проще...
         store = Ext.create(Ext.data.Store,{
             model: 'EVEInDust.model.IndJobToProducingItemAssociation',
             remoteFilter: true,
@@ -110,7 +111,6 @@ Ext.define('EVEInDust.view.orderCreator.OrderCreatorController', {
                     },
                     callback: function () {
                         button.enable();
-
                     }
                 });
             } else {
@@ -123,8 +123,7 @@ Ext.define('EVEInDust.view.orderCreator.OrderCreatorController', {
                     buttons: Ext.Msg.OK
                 });
             }
-        }
-    );
+        });
     }
     
 });

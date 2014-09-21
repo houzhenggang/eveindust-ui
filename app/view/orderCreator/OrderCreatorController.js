@@ -18,8 +18,31 @@ Ext.define('EVEInDust.view.orderCreator.OrderCreatorController', {
     onClickDeleteOrderButton: function(){
         EVEInDust.Common.deleteSelectedItemInGrid(this.lookupReference("orders-grid"),"Удаление заказа не удалось");
     },
-    OnItemClickInOrdersGrid: function(ordersGrid, order){
-        this.lookupReference("itemtoproduce-grid").getStore().addFilter({
+    OnItemClickInOrdersGrid: function(ordersGrid, order) {
+        var itemToProduceStore = this.lookupReference("itemtoproduce-grid").getStore(),
+            afterLoad,
+            me = this
+        ;
+        afterLoad = function (store, itemToProduces) {
+            var i,
+                filters = []
+            ;
+            for(i in itemToProduces) {
+                if(itemToProduces.hasOwnProperty(i)) {
+                    console.log(itemToProduces[i]);
+                    filters.push({
+                        id: "typeId",
+                        property: "typeId",
+                        value: itemToProduces[i].get("typeId")
+                    })
+                }
+            }
+            me.getViewModel().getStore('itemId2Name').addFilter(filters);
+            itemToProduceStore.un('load',afterLoad);
+
+        };
+        itemToProduceStore.on('load',afterLoad);
+        itemToProduceStore.addFilter({
             id: "order",
             property: "order",
             value: order.getId()
@@ -39,12 +62,7 @@ Ext.define('EVEInDust.view.orderCreator.OrderCreatorController', {
     onCancelEditItemToProduceRow: EVEInDust.Common.onCancelEditModelRow,
     onEditItemToProduceRowComplete: EVEInDust.Common.onEditModelRowComplete(),
     onItemClickInItemToProduceGrid: function(grid, itemToProduce){
-        this.lookupReference("associatedJobs-grid").getStore().addFilter({
-            id: "itemToProduce",
-            property: "itemToProduce",
-            value: itemToProduce.getId()
-        });
-        this.lookupReference("notAssociatedJobs-grid").getStore().addFilter({
+        this.getViewModel().getStore('industry_activity_products').addFilter([{
             id: "productTypeId",
             property: "productTypeId",
             value: itemToProduce.get("typeId")
@@ -52,7 +70,21 @@ Ext.define('EVEInDust.view.orderCreator.OrderCreatorController', {
             id: "activityId",
             property: "activityId",
             value: EVEInDust.common.IndustryActivity.Manufacturing
+        }]);
+        this.lookupReference("associatedJobs-grid").getStore().addFilter({
+            id: "itemToProduce",
+            property: "itemToProduce",
+            value: itemToProduce.getId()
         });
+        this.lookupReference("notAssociatedJobs-grid").getStore().addFilter([{
+            id: "productTypeId",
+            property: "productTypeId",
+            value: itemToProduce.get("typeId")
+        },{
+            id: "activityId",
+            property: "activityId",
+            value: EVEInDust.common.IndustryActivity.Manufacturing
+        }]);
     },
     onClickAssociateJobToProducingItemButton: function (button) {
         var association,

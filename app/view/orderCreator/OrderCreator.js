@@ -123,8 +123,20 @@ Ext.define("EVEInDust.view.orderCreator.OrderCreator",{
             },{
                 header: "Название",
                 dataIndex: "typeId",
-                renderer: function(value) {
-                    return value;
+                renderer: function(typeId, meta, record, rowIndex, colIndex, store, view_) {
+                    var view = this.up('window'),
+                        me = this,
+                        invType = view.getViewModel().getStore('itemId2Name').findRecord("typeId",typeId),
+                        typeName = typeId
+                    ;
+                    if(!invType) {
+                        setTimeout(function(){ view_.refresh() }, 500);
+                    } else {
+                        typeName = invType.get("typeName");
+                    }
+
+
+                    return typeName;
                 },
                 editor: {
                     allowBlank: false
@@ -159,16 +171,24 @@ Ext.define("EVEInDust.view.orderCreator.OrderCreator",{
             remoteFilter: true
         },
         columns: [{
-            header: "#",
-            dataIndex: "jobId",
+            header: "Дата окончания",
+            xtype: "datecolumn",
+            format: "Y-m-d H:i:s",
+            dataIndex: "endDate",
             flex: 1
         },{
-            header: "Название",
-            dataIndex: "productTypeName",
-            flex: 2
+            header: "Кол-во",
+            dataIndex: "runs",
+            flex: 1,
+            renderer: function(runsCount, meta, record, rowIndex, colIndex, store, view) {
+                var viewModel = this.up('window').getViewModel(),
+                    quantityPerRun = viewModel.getStore('industry_activity_products').findRecord("productTypeId",record.get("productTypeId")).get("quantity")
+                ;
+                return quantityPerRun*runsCount;
+            }
         },{
-            header: "Дата",
-            dataIndex: "startDate",
+            header: "Цена",
+            dataIndex: "cost",
             flex: 1
         }],
         listeners: {
@@ -198,16 +218,24 @@ Ext.define("EVEInDust.view.orderCreator.OrderCreator",{
             displayInfo: true
         }],
         columns: [{
-            header: "#",
-            dataIndex: "jobId",
+            header: "Дата окончания",
+            xtype: "datecolumn",
+            format: "Y-m-d H:i:s",
+            dataIndex: "endDate",
             flex: 1
         },{
-            header: "Название",
-            dataIndex: "productTypeName",
-            flex: 2
+            header: "Кол-во",
+            dataIndex: "runs",
+            flex: 1,
+            renderer: function(runsCount, meta, record, rowIndex, colIndex, store, view) {
+                var viewModel = this.up('window').getViewModel(),
+                    quantityPerRun = viewModel.getStore('industry_activity_products').findRecord("productTypeId",record.get("productTypeId")).get("quantity")
+                    ;
+                return quantityPerRun*runsCount;
+            }
         },{
-            header: "Дата",
-            dataIndex: "startDate",
+            header: "Цена",
+            dataIndex: "cost",
             flex: 1
         }],
         listeners: {

@@ -5,7 +5,6 @@ Ext.define("EVEInDust.view.tradeHubEditor.TradeHubEditor",{
     requires: [
         'EVEInDust.view.tradeHubEditor.TradeHubEditorController',
         'EVEInDust.view.tradeHubEditor.TradeHubEditorModel',
-        'EVEInDust.view.tradeHubEditor.CreateWindow',
         "EVEInDust.store.TradeHubs"
     ],
     controller: "TradeHubEditor",

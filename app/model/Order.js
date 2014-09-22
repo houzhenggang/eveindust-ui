@@ -6,18 +6,18 @@ Ext.define("EVEInDust.model.Order", {
     idProperty: "id",
     fields: [
         {
-                name: "stationId",            
-                type: "int"            
+            name: "stationId",
+            type: "int"
         },
         {
-                name: "id",            
-                type: "int",            
-                useNull: true,            
-                persist: false            
+            name: "id",
+            type: "int",
+            useNull: true,
+            persist: false
         },
         {
-                name: "status_id",            
-                type: "int"            
+            name: "status_id",
+            type: "int"
         }
     ],
     validations: [
@@ -42,5 +42,5 @@ Ext.define("EVEInDust.model.Order", {
             setterName: 'setStatus'
         }
     ],
-    proxy: {"type":"rest","url":"/api/orders","actionMethods":{"update":"PATCH","read":"GET","create":"POST","destroy":"DELETE"},"reader":{"rootProperty":"data","type":"json","messageProperty":"message"},"writer":{"type":"json","writeRecordId":false,"writeAllFields":false,"dateFormat":"Y-m-d\\TH:i:sO"}}
+    proxy: {"type": "rest", "url": "/api/orders", "actionMethods": {"update": "PATCH", "read": "GET", "create": "POST", "destroy": "DELETE"}, "reader": {"rootProperty": "data", "type": "json", "messageProperty": "message"}, "writer": {"type": "json", "writeRecordId": false, "writeAllFields": false, "dateFormat": "Y-m-d\\TH:i:sO"}}
 });

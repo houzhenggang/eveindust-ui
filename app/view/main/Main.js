@@ -28,6 +28,9 @@ Ext.define('EVEInDust.view.main.Main', {
             },{
                 text: "Редактор Торговых Хабов",
                 handler: "onClickTradeHubEditorButton"
+            },{
+                text: "Мониторинг реализации заказов",
+                handler: "onClickSalesMonitoringButton"
             }]
         }
     }]

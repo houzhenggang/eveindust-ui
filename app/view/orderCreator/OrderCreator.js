@@ -14,7 +14,7 @@ Ext.define("EVEInDust.view.orderCreator.OrderCreator",{
         type: "OrderCreator"
     },
     width: 700,
-    height: 400,
+    height: 650,
     closable: true,
     layout: {
         type: "vbox",

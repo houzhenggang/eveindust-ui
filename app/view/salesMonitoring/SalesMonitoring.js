@@ -24,6 +24,7 @@ Ext.define("EVEInDust.view.salesMonitoring.SalesMonitoring",{
         xtype: "grid",
         flex: 1,
         reference: "orders-grid",
+        title: "Заказы",
         store: {
             model: "EVEInDust.model.Order",
             pageSize: 0,
@@ -55,6 +56,7 @@ Ext.define("EVEInDust.view.salesMonitoring.SalesMonitoring",{
     },{
         xtype: "grid",
         reference: "itemsToProduce-grid",
+        title: "Продаваемые товары",
         flex: 1,
         store: {
             model: "EVEInDust.model.ItemToProduce",

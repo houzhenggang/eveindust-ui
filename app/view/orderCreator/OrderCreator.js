@@ -118,17 +118,15 @@ Ext.define("EVEInDust.view.orderCreator.OrderCreator",{
                 }]
             },
             columns: [{
-                header: "#",
-                dataIndex: "id"
-            },{
                 header: "Название",
                 dataIndex: "typeId",
+                flex: 2,
                 renderer: function(typeId, meta, record, rowIndex, colIndex, store, view_) {
-                    var view = this.up('window'),
-                        me = this,
-                        invType = view.getViewModel().getStore('itemId2Name').findRecord("typeId",typeId),
+                    var invType = this.up('window').getViewModel().getStore('typeId2Name').findRecord("typeId",typeId),
                         typeName = typeId
                     ;
+                    // мне приходится так рендерить, потому что хранилище typeId2Name загружается после того, как загружается
+                    // хранилище теблицы
                     if(!invType) {
                         setTimeout(function(){ view_.refresh() }, 500);
                     } else {
@@ -144,11 +142,27 @@ Ext.define("EVEInDust.view.orderCreator.OrderCreator",{
             },{
                 header: "План",
                 dataIndex: "count",
+                flex: 1,
                 editor: {
                     allowBlank: false
                 }
             },{
-                header: "В произв-ве"
+                header: "В произв-ве",
+                dataIndex: "id",
+                flex: 1,
+                renderer:function(id, meta, record, rowIndex, colIndex, store, view_) {
+                    var countRecord = this.up('window').getViewModel().getStore("itemToProduceCounts").getById(id),
+                        result = ""
+                    ;
+
+                    if(!countRecord) {
+                        setTimeout(function(){ view_.refresh() }, 500);
+                    } else {
+                        result = countRecord.get("count");
+                    }
+
+                    return result;
+                }
             }],
             listeners: {
                 itemclick: "onItemClickInItemToProduceGrid"
@@ -181,10 +195,17 @@ Ext.define("EVEInDust.view.orderCreator.OrderCreator",{
             dataIndex: "runs",
             flex: 1,
             renderer: function(runsCount, meta, record, rowIndex, colIndex, store, view) {
-                var viewModel = this.up('window').getViewModel(),
-                    quantityPerRun = viewModel.getStore('industry_activity_products').findRecord("productTypeId",record.get("productTypeId")).get("quantity")
+                var indActivityRecord = this.up('window').getViewModel().getStore('industry_activity_products').findRecord("productTypeId",record.get("productTypeId")),
+                    result = runsCount
                 ;
-                return quantityPerRun*runsCount;
+
+                if(!indActivityRecord) {
+                    setTimeout(function(){ view.refresh() }, 500);
+                } else {
+                    result = indActivityRecord.get("quantity")*runsCount;
+                }
+
+                return result;
             }
         },{
             header: "Цена",
@@ -228,10 +249,17 @@ Ext.define("EVEInDust.view.orderCreator.OrderCreator",{
             dataIndex: "runs",
             flex: 1,
             renderer: function(runsCount, meta, record, rowIndex, colIndex, store, view) {
-                var viewModel = this.up('window').getViewModel(),
-                    quantityPerRun = viewModel.getStore('industry_activity_products').findRecord("productTypeId",record.get("productTypeId")).get("quantity")
+                var indActivityRecord = this.up('window').getViewModel().getStore('industry_activity_products').findRecord("productTypeId",record.get("productTypeId")),
+                    result = runsCount
                     ;
-                return quantityPerRun*runsCount;
+
+                if(!indActivityRecord) {
+                    setTimeout(function(){ view.refresh() }, 500);
+                } else {
+                    result = indActivityRecord.get("quantity")*runsCount;
+                }
+
+                return result;
             }
         },{
             header: "Цена",

@@ -4,7 +4,7 @@ Ext.define("EVEInDust.model.sde.IndustryActivityProduct", {
     idProperty: "id",
     fields: [
         {
-            name: "typeid",
+            name: "typeId",
             type: "int",
             useNull: true
         },
@@ -33,7 +33,7 @@ Ext.define("EVEInDust.model.sde.IndustryActivityProduct", {
     validations: [
         {
             type: "presence",
-            field: "typeid"
+            field: "typeId"
         },
         {
             type: "presence",

@@ -29,7 +29,6 @@ Ext.define('EVEInDust.view.orderCreator.OrderCreatorController', {
             ;
             for(i in itemToProduces) {
                 if(itemToProduces.hasOwnProperty(i)) {
-                    console.log(itemToProduces[i]);
                     filters.push({
                         id: "typeId",
                         property: "typeId",
@@ -37,11 +36,15 @@ Ext.define('EVEInDust.view.orderCreator.OrderCreatorController', {
                     })
                 }
             }
-            me.getViewModel().getStore('itemId2Name').addFilter(filters);
+            me.getViewModel().getStore('typeId2Name').addFilter(filters);
             itemToProduceStore.un('load',afterLoad);
-
         };
         itemToProduceStore.on('load',afterLoad);
+        this.getViewModel().getStore("itemToProduceCounts").addFilter({
+            id: "order",
+            property: "order",
+            value: order.getId()
+        });
         itemToProduceStore.addFilter({
             id: "order",
             property: "order",

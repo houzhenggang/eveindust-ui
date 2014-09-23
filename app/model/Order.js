@@ -18,6 +18,12 @@ Ext.define("EVEInDust.model.Order", {
         {
             name: "status_id",
             type: "int"
+        },
+        {
+            name: "readyDate",
+            type: "date",
+            dateFormat: "Y-m-d\\TH:i:sO",
+            useNull: true
         }
     ],
     validations: [
@@ -28,6 +34,10 @@ Ext.define("EVEInDust.model.Order", {
         {
             type: "presence",
             field: "status_id"
+        },
+        {
+            type: "presence",
+            field: "readyDate"
         }
     ],
     associations: [

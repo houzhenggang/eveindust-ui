@@ -43,11 +43,25 @@ Ext.define("EVEInDust.view.salesMonitoring.SalesMonitoring",{
             }]
         },
         columns: [{
-            header: "#"
+            header: "#",
+            dataIndex: "id"
         },{
-            header: "Хаб"
+            header: "Хаб",
+            dataIndex: "stationId",
+            renderer: function(stationId){
+                var record = Ext.getStore("TradeHubs").findRecord("stationId",stationId);
+
+                if(record) {
+                    return record.get("name");
+                } else {
+                    return stationId;
+                }
+            }
         },{
-            header: "Дата готовности"
+            header: "Дата готовности",
+            dataIndex: "readyDate",
+            xtype: "datecolumn",
+            format: "Y-m-d H:i:s"
         },{
             header: "Дата нач. реализ."
         },{

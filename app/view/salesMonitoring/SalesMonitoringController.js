@@ -7,6 +7,6 @@ Ext.define('EVEInDust.view.salesMonitoring.SalesMonitoringController', {
             property: "order",
             value: order.getId()
         });
-    }
-    
+    },
+    onEditOrderRowComplete: EVEInDust.Common.onEditModelRowComplete()
 });

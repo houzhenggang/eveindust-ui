@@ -25,6 +25,13 @@ Ext.define("EVEInDust.view.salesMonitoring.SalesMonitoring",{
         flex: 1,
         reference: "orders-grid",
         title: "Заказы",
+        plugins: [{
+            ptype: 'rowediting',
+            clicksToEdit: 2,
+            listeners: {
+                edit: 'onEditOrderRowComplete'
+            }
+        }],
         store: {
             model: "EVEInDust.model.Order",
             pageSize: 0,
@@ -61,11 +68,32 @@ Ext.define("EVEInDust.view.salesMonitoring.SalesMonitoring",{
             header: "Дата готовности",
             dataIndex: "readyDate",
             xtype: "datecolumn",
-            format: "Y-m-d H:i:s"
+            format: "Y-m-d H:i:s",
+            editor: {
+                xtype: "datefield",
+                format: "Y-m-d H:i:s",
+                allowBlank: true
+            }
         },{
-            header: "Дата нач. реализ."
+            header: "Дата нач. реализ.",
+            dataIndex: "startSellingDate",
+            xtype: "datecolumn",
+            format: "Y-m-d H:i:s",
+            editor: {
+                xtype: "datefield",
+                format: "Y-m-d H:i:s",
+                allowBlank: true
+            }
         },{
-            header: "Дата оконч. реализ."
+            header: "Дата оконч. реализ.",
+            dataIndex: "endSellingDate",
+            xtype: "datecolumn",
+            format: "Y-m-d H:i:s",
+            editor: {
+                xtype: "datefield",
+                format: "Y-m-d H:i:s",
+                allowBlank: true
+            }
         }],
         listeners: {
             itemclick: "onItemClickInOrderGrid"

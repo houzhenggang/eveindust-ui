@@ -24,6 +24,18 @@ Ext.define("EVEInDust.model.Order", {
             type: "date",
             dateFormat: "Y-m-d\\TH:i:sO",
             useNull: true
+        },
+        {
+            name: "startSellingDate",
+            type: "date",
+            dateFormat: "Y-m-d\\TH:i:sO",
+            useNull: true
+        },
+        {
+            name: "endSellingDate",
+            type: "date",
+            dateFormat: "Y-m-d\\TH:i:sO",
+            useNull: true
         }
     ],
     validations: [
@@ -38,6 +50,14 @@ Ext.define("EVEInDust.model.Order", {
         {
             type: "presence",
             field: "readyDate"
+        },
+        {
+            type: "presence",
+            field: "startSellingDate"
+        },
+        {
+            type: "presence",
+            field: "endSellingDate"
         }
     ],
     associations: [

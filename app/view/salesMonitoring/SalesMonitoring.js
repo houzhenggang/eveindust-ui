@@ -66,25 +66,45 @@ Ext.define("EVEInDust.view.salesMonitoring.SalesMonitoring",{
             header: "Дата нач. реализ."
         },{
             header: "Дата оконч. реализ."
-        }]
+        }],
+        listeners: {
+            itemclick: "onItemClickInOrderGrid"
+        }
     },{
         xtype: "grid",
         reference: "itemsToProduce-grid",
         title: "Продаваемые товары",
         flex: 1,
-        store: {
-            model: "EVEInDust.model.ItemToProduce",
+        store:{
             pageSize: 0,
-            remoteFilter: true
+            remoteFilter: true,
+            fields: [
+                { name: "id", type: "int"},
+                { name: "typeId", type: "int"},
+                { name: "itemsSold", type: "int"},
+                { name: "itemsRemains", type: "int"},
+                { name: "income", type: "int"}
+            ],
+            proxy: {
+                "type": "rest",
+                "url": "/api/itemsale",
+                "actionMethods": {"update": "PATCH", "read": "GET", "create": "POST", "destroy": "DELETE"},
+                "reader": {"rootProperty": "data", "type": "json", "messageProperty": "message"},
+                "writer": {"type": "json", "writeRecordId": false, "writeAllFields": false, "dateFormat": "Y-m-d\\TH:i:sO"}
+            }
         },
         columns: [{
-            header: "Название"
+            header: "Название",
+            dataIndex: "typeId"
         },{
-            header: "Остаток (шт)"
+            header: "Остаток (шт)",
+            dataIndex: "itemsRemains"
         },{
-            header: "Продано (шт)"
+            header: "Продано (шт)",
+            dataIndex: "itemsSold"
         },{
-            header: "Доход (ISK)"
+            header: "Доход (ISK)",
+            dataIndex: "income"
         }]
     }]
 

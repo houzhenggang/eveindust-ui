@@ -5,7 +5,8 @@ Ext.define("EVEInDust.view.orderCreator.OrderCreator",{
         'EVEInDust.view.orderCreator.OrderCreatorController',
         'EVEInDust.view.orderCreator.OrderCreatorModel',
         "EVEInDust.model.ItemToProduce",
-        "EVEInDust.model.yapeal.CorpIndustryJob"
+        "EVEInDust.model.yapeal.CorpIndustryJob",
+        "EVEInDust.common.OrderStatuses"
     ],
     title: "Формирование заказа",
     xtype: "OrderCreator",
@@ -43,7 +44,12 @@ Ext.define("EVEInDust.view.orderCreator.OrderCreator",{
                 model: 'EVEInDust.model.Order',
                 remoteSort: true,
                 remoteFilter: true,
-                autoLoad: true
+                autoLoad: true,
+                filters: [{
+                    id: "status",
+                    property: "status",
+                    value: EVEInDust.common.OrderStatuses.Forming
+                }]
             },
             flex: 1,
             tbar: {
@@ -54,11 +60,12 @@ Ext.define("EVEInDust.view.orderCreator.OrderCreator",{
                     text: "Удалить",
                     handler: "onClickDeleteOrderButton"
                 },{
-                    text: "Закрыть"
+                    text: "Закрыть",
+                    handler: "onClickCloseOrderButton"
                 }]
             },
             listeners: {
-                itemclick: "OnItemClickInOrdersGrid"
+                itemclick: "onItemClickInOrdersGrid"
             },
             columns: [{
                 header: "#",

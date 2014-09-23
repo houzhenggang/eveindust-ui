@@ -18,7 +18,7 @@ Ext.define('EVEInDust.view.orderCreator.OrderCreatorController', {
     onClickDeleteOrderButton: function(){
         EVEInDust.Common.deleteSelectedItemInGrid(this.lookupReference("orders-grid"),"Удаление заказа не удалось");
     },
-    OnItemClickInOrdersGrid: function(ordersGrid, order) {
+    onItemClickInOrdersGrid: function(ordersGrid, order) {
         var itemToProduceStore = this.lookupReference("itemtoproduce-grid").getStore(),
             afterLoad,
             me = this
@@ -159,6 +159,26 @@ Ext.define('EVEInDust.view.orderCreator.OrderCreatorController', {
                 });
             }
         });
+    },
+    onClickCloseOrderButton: function(button){
+        var ordersGrid = this.lookupReference('orders-grid'),
+            order = ordersGrid.getSelection()[0]
+        ;
+        ordersGrid.setLoading(true);
+        button.disable();
+        order.setStatus(Ext.getStore("OrderStatuses").getById(EVEInDust.common.OrderStatuses.WaitingForProduce));
+        order.save({
+            success: function(){
+                ordersGrid.getStore().load();
+            },
+            failure: function(){
+                order.reject();
+            },
+            callback: function(){
+                button.enable();
+                ordersGrid.setLoading(false);
+            }
+        })
     }
     
 });

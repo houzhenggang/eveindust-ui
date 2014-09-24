@@ -17,11 +17,10 @@ Ext.define('EVEInDust.Application', {
                 i, row,
                 data = []
             ;
-            console.log(invTypesTable);
             for(i in invTypesTable.data) {
                 if(invTypesTable.data.hasOwnProperty(i)) {
                     row = invTypesTable.data[i];
-                    if(+row[invTypesTable.c.groupID] === 83) {
+                    if(+row[invTypesTable.c.groupID] === 83 || +row[invTypesTable.c.groupID] === 85 || +row[invTypesTable.c.groupID] === 385) {
                         data.push([row[invTypesTable.c.typeID], row[invTypesTable.c.typeName]]);
                     }
                 }
@@ -34,8 +33,6 @@ Ext.define('EVEInDust.Application', {
                 data: data,
                 storeId: "eveoj.InvTypes"
             });
-            console.log(Ext.getStore("eveoj.InvTypes"));
-
         });
     }
 });

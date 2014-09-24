@@ -125,7 +125,12 @@ Ext.define("EVEInDust.view.salesMonitoring.SalesMonitoring",{
             header: "Название",
             dataIndex: "typeId",
             renderer: function(typeId) {
-                return Ext.getStore("eveoj.invTypes").findRecord("typeId",typeId).get("typeName");
+                var record = Ext.getStore("eveoj.InvTypes").findRecord("typeId",typeId);
+                if(record){
+                    return record.get("typeName");
+                } else {
+                    return typeId;
+                }
             }
         },{
             header: "Остаток (шт)",

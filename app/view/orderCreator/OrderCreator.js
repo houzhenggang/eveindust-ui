@@ -146,27 +146,14 @@ Ext.define("EVEInDust.view.orderCreator.OrderCreator",{
             },{
                 header: "План",
                 dataIndex: "count",
-                flex: 1,
+                flex: 1/2,
                 editor: {
                     allowBlank: false
                 }
             },{
                 header: "В произв-ве",
-                dataIndex: "id",
-                flex: 1,
-                renderer:function(id, meta, record, rowIndex, colIndex, store, view_) {
-                    var countRecord = this.up('window').getViewModel().getStore("itemToProduceCounts").getById(id),
-                        result = ""
-                    ;
-
-                    if(!countRecord) {
-                        //setTimeout(function(){ view_.refresh() }, 500);
-                    } else {
-                        result = countRecord.get("count");
-                    }
-
-                    return result;
-                }
+                dataIndex: "realCount",
+                flex: 1/2
             }],
             listeners: {
                 itemclick: "onItemClickInItemToProduceGrid"

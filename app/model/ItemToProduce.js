@@ -14,6 +14,10 @@ Ext.define("EVEInDust.model.ItemToProduce", {
             type: "int"
         },
         {
+            name: "realCount",
+            type: "int"
+        },
+        {
             name: "id",
             type: "int",
             useNull: true,
@@ -28,6 +32,10 @@ Ext.define("EVEInDust.model.ItemToProduce", {
         {
             type: "presence",
             field: "typeId"
+        },
+        {
+            type: "presence",
+            field: "realCount"
         },
         {
             type: "presence",

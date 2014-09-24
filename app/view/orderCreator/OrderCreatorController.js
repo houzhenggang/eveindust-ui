@@ -19,11 +19,6 @@ Ext.define('EVEInDust.view.orderCreator.OrderCreatorController', {
         EVEInDust.Common.deleteSelectedItemInGrid(this.lookupReference("orders-grid"),"Удаление заказа не удалось");
     },
     onItemClickInOrdersGrid: function(ordersGrid, order) {
-        this.getViewModel().getStore("itemToProduceCounts").addFilter({
-            id: "order",
-            property: "order",
-            value: order.getId()
-        });
         this.lookupReference("itemtoproduce-grid").getStore().addFilter({
             id: "order",
             property: "order",

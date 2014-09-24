@@ -134,11 +134,11 @@ Ext.define("EVEInDust.view.orderCreator.OrderCreator",{
                     ;
                     // мне приходится так рендерить, потому что хранилище typeId2Name загружается после того, как загружается
                     // хранилище теблицы
-                    if(!invType) {
-                        setTimeout(function(){ view_.refresh() }, 500);
-                    } else {
-                        typeName = invType.get("typeName");
-                    }
+                    //if(!invType) {
+                    //    setTimeout(function(){ view_.refresh() }, 500);
+                    //} else {
+                    //    typeName = invType.get("typeName");
+                    //}
 
 
                     return typeName;
@@ -163,7 +163,7 @@ Ext.define("EVEInDust.view.orderCreator.OrderCreator",{
                     ;
 
                     if(!countRecord) {
-                        setTimeout(function(){ view_.refresh() }, 500);
+                        //setTimeout(function(){ view_.refresh() }, 500);
                     } else {
                         result = countRecord.get("count");
                     }

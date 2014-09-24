@@ -23,6 +23,10 @@ Ext.define('EVEInDust.view.orderCreator.OrderCreatorModel', {
             pageSize: 0,
             remoteFilter: true
         },
+        typeNamesForCombo: {
+            source: "eveoj.InvTypes",
+            pageSize: 0
+        },
         itemToProduceCounts: {
             pageSize: 0,
             remoteFilter: true,

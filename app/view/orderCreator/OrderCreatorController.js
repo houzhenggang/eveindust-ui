@@ -19,33 +19,12 @@ Ext.define('EVEInDust.view.orderCreator.OrderCreatorController', {
         EVEInDust.Common.deleteSelectedItemInGrid(this.lookupReference("orders-grid"),"Удаление заказа не удалось");
     },
     onItemClickInOrdersGrid: function(ordersGrid, order) {
-        var itemToProduceStore = this.lookupReference("itemtoproduce-grid").getStore(),
-            afterLoad,
-            me = this
-        ;
-        afterLoad = function (store, itemToProduces) {
-            var i,
-                filters = []
-            ;
-            for(i in itemToProduces) {
-                if(itemToProduces.hasOwnProperty(i)) {
-                    filters.push({
-                        id: "typeId",
-                        property: "typeId",
-                        value: itemToProduces[i].get("typeId")
-                    })
-                }
-            }
-            me.getViewModel().getStore('typeId2Name').addFilter(filters);
-            itemToProduceStore.un('load',afterLoad);
-        };
-        itemToProduceStore.on('load',afterLoad);
         this.getViewModel().getStore("itemToProduceCounts").addFilter({
             id: "order",
             property: "order",
             value: order.getId()
         });
-        itemToProduceStore.addFilter({
+        this.lookupReference("itemtoproduce-grid").getStore().addFilter({
             id: "order",
             property: "order",
             value: order.getId()

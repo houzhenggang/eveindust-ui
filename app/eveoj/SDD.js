@@ -1,8 +1,7 @@
 Ext.define("EVEInDust.eveoj.SDD",{
     singleton: true,
     SDDInstance: null,
-    invTypes: null,
-    invTypesStore: null,
+    invTypesTable: null,
     initSSDInstance: function(url, callback){
         var SDD = EVEoj.SDD.Create('json', {'path': url}),
             me = this
@@ -17,25 +16,9 @@ Ext.define("EVEInDust.eveoj.SDD",{
             });
     },
     handleInvTypes: function(arg){
-        var i, row,
-            table = arg.table
-        ;
-        this.invTypesStore = Ext.create("Ext.data.Store",{
-            storeId: "eveoj.invTypes",
-            fields: [
-                { name: "typeId", type: "int"},
-                { name: "typeName", type: "string"}
-            ]
-        });
-        for(i in table.data) {
-            if(table.data.hasOwnProperty(i)) {
-                row = table.data[i];
-                this.invTypesStore.add({typeId: row[table.c.typeID], typeName: row[table.c.typeName]})
-            }
-        }
-
+        this.invTypesTable = arg.table;
     },
-    getInvTypesStore: function(){
-        return this.invTypesStore;
+    getInvTypesTable: function(){
+        return this.invTypesTable;
     }
 },null);

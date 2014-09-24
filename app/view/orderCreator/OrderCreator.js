@@ -128,20 +128,8 @@ Ext.define("EVEInDust.view.orderCreator.OrderCreator",{
                 header: "Название",
                 dataIndex: "typeId",
                 flex: 2,
-                renderer: function(typeId, meta, record, rowIndex, colIndex, store, view_) {
-                    var invType = this.up('window').getViewModel().getStore('typeId2Name').findRecord("typeId",typeId),
-                        typeName = typeId
-                    ;
-                    // мне приходится так рендерить, потому что хранилище typeId2Name загружается после того, как загружается
-                    // хранилище теблицы
-                    //if(!invType) {
-                    //    setTimeout(function(){ view_.refresh() }, 500);
-                    //} else {
-                    //    typeName = invType.get("typeName");
-                    //}
-
-
-                    return typeName;
+                renderer: function(typeId) {
+                    return Ext.getStore("eveoj.invTypes").findRecord("typeId",typeId).get("typeName");
                 },
                 editor: {
                     allowBlank: false

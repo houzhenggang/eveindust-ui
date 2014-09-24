@@ -123,7 +123,10 @@ Ext.define("EVEInDust.view.salesMonitoring.SalesMonitoring",{
         },
         columns: [{
             header: "Название",
-            dataIndex: "typeId"
+            dataIndex: "typeId",
+            renderer: function(typeId) {
+                return Ext.getStore("eveoj.invTypes").findRecord("typeId",typeId).get("typeName");
+            }
         },{
             header: "Остаток (шт)",
             dataIndex: "itemsRemains"

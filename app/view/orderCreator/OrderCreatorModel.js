@@ -26,21 +26,6 @@ Ext.define('EVEInDust.view.orderCreator.OrderCreatorModel', {
         typeNamesForCombo: {
             source: "eveoj.InvTypes",
             pageSize: 0
-        },
-        itemToProduceCounts: {
-            pageSize: 0,
-            remoteFilter: true,
-            fields: [
-                { name: "id", type: "int"},
-                { name: "count", type: "int"}
-            ],
-            proxy: {
-                "type": "rest",
-                "url": "/api/yapeal/sumofproducingitemsperitemtoproduces",
-                "actionMethods": {"update": "PATCH", "read": "GET", "create": "POST", "destroy": "DELETE"},
-                "reader": {"rootProperty": "data", "type": "json", "messageProperty": "message"},
-                "writer": {"type": "json", "writeRecordId": false, "writeAllFields": false, "dateFormat": "Y-m-d\\TH:i:sO"}
-            }
         }
     }
 

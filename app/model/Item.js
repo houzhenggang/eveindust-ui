@@ -1,4 +1,4 @@
-Ext.define("EVEInDust.model.ItemToProduce", {
+Ext.define("EVEInDust.model.Item", {
     extend: "Ext.data.Model",
     uses: [
         'EVEInDust.model.Order'

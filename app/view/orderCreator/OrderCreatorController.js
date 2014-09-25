@@ -19,44 +19,44 @@ Ext.define('EVEInDust.view.orderCreator.OrderCreatorController', {
         EVEInDust.Common.deleteSelectedItemInGrid(this.lookupReference("orders-grid"),"Удаление заказа не удалось");
     },
     onItemClickInOrdersGrid: function(ordersGrid, order) {
-        this.lookupReference("itemtoproduce-grid").getStore().addFilter({
+        this.lookupReference("items-grid").getStore().addFilter({
             id: "order",
             property: "order",
             value: order.getId()
         });
     },
-    onClickCreateItemToProduceItem: function(){
-        var itemToProducesGrid = this.lookupReference("itemtoproduce-grid"),
-            itemToProduce = new EVEInDust.model.ItemToProduce()
+    onClickCreateItemItem: function(){
+        var itemsGrid = this.lookupReference("items-grid"),
+            item = new EVEInDust.model.Item()
         ;
-        itemToProduce.setOrder(this.lookupReference("orders-grid").getSelection()[0]);
-        itemToProducesGrid.getStore().insert(0, [itemToProduce]);
-        itemToProducesGrid.findPlugin("rowediting").startEdit(itemToProduce,0);
+        item.setOrder(this.lookupReference("orders-grid").getSelection()[0]);
+        itemsGrid.getStore().insert(0, [item]);
+        itemsGrid.findPlugin("rowediting").startEdit(item,0);
     },
-    onClickDeleteItemToProduceItem: function(){
-        EVEInDust.Common.deleteSelectedItemInGrid(this.lookupReference("itemtoproduce-grid"),"Удаление товара для производства не удалось");
+    onClickDeleteItemItem: function(){
+        EVEInDust.Common.deleteSelectedItemInGrid(this.lookupReference("items-grid"),"Удаление товара для производства не удалось");
     },
-    onCancelEditItemToProduceRow: EVEInDust.Common.onCancelEditModelRow,
-    onEditItemToProduceRowComplete: EVEInDust.Common.onEditModelRowComplete(),
-    onItemClickInItemToProduceGrid: function(grid, itemToProduce){
+    onCancelEditItemRow: EVEInDust.Common.onCancelEditModelRow,
+    onEditItemRowComplete: EVEInDust.Common.onEditModelRowComplete(),
+    onItemClickInItemGrid: function(grid, item){
         this.getViewModel().getStore('industry_activity_products').addFilter([{
             id: "productTypeId",
             property: "productTypeId",
-            value: itemToProduce.get("typeId")
+            value: item.get("typeId")
         },{
             id: "activityId",
             property: "activityId",
             value: EVEInDust.common.IndustryActivity.Manufacturing
         }]);
         this.lookupReference("associatedJobs-grid").getStore().addFilter({
-            id: "itemToProduce",
-            property: "itemToProduce",
-            value: itemToProduce.getId()
+            id: "item",
+            property: "item",
+            value: item.getId()
         });
         this.lookupReference("notAssociatedJobs-grid").getStore().addFilter([{
             id: "productTypeId",
             property: "productTypeId",
-            value: itemToProduce.get("typeId")
+            value: item.get("typeId")
         },{
             id: "activityId",
             property: "activityId",
@@ -70,7 +70,7 @@ Ext.define('EVEInDust.view.orderCreator.OrderCreatorController', {
         ;
         button.disable();
         association = new EVEInDust.model.IndJobToProducingItemAssociation();
-        association.setItemToProduce(this.lookupReference("itemtoproduce-grid").getSelection()[0]);
+        association.setItem(this.lookupReference("items-grid").getSelection()[0]);
         association.set("jobId",notAssociatedJobsGrid.getSelection()[0].get("jobId"));
         
         association.save({

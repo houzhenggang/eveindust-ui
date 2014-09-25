@@ -4,7 +4,7 @@ Ext.define("EVEInDust.view.orderCreator.OrderCreator",{
     requires: [
         'EVEInDust.view.orderCreator.OrderCreatorController',
         'EVEInDust.view.orderCreator.OrderCreatorModel',
-        "EVEInDust.model.ItemToProduce",
+        "EVEInDust.model.Item",
         "EVEInDust.model.yapeal.CorpIndustryJob",
         "EVEInDust.common.OrderStatuses"
     ],
@@ -101,9 +101,9 @@ Ext.define("EVEInDust.view.orderCreator.OrderCreator",{
             xtype: "grid",
             title: "Предметы для произв-ва",
             flex: 2,
-            reference: "itemtoproduce-grid",
+            reference: "items-grid",
             store: {
-                model: 'EVEInDust.model.ItemToProduce',
+                model: 'EVEInDust.model.Item',
                 remoteSort: true,
                 remoteFilter: true
             },
@@ -111,17 +111,17 @@ Ext.define("EVEInDust.view.orderCreator.OrderCreator",{
                 ptype: 'rowediting',
                 clicksToEdit: 2,
                 listeners: {
-                    edit: 'onEditItemToProduceRowComplete',
-                    canceledit: 'onCancelEditItemToProduceRow'
+                    edit: 'onEditItemRowComplete',
+                    canceledit: 'onCancelEditItemRow'
                 }
             }],
             tbar: {
                 items:[{
                     text: "Создать",
-                    handler: "onClickCreateItemToProduceItem"
+                    handler: "onClickCreateItemItem"
                 },{
                     text: "Удалить",
-                    handler: "onClickDeleteItemToProduceItem"
+                    handler: "onClickDeleteItemItem"
                 }]
             },
             columns: [{
@@ -138,7 +138,6 @@ Ext.define("EVEInDust.view.orderCreator.OrderCreator",{
                 },
                 editor: {
                     xtype: "combo",
-                    allowBlank: false,
                     queryMode: 'local',
                     store: "eveoj.InvTypes",
                     displayField: 'typeName',
@@ -160,7 +159,7 @@ Ext.define("EVEInDust.view.orderCreator.OrderCreator",{
                 flex: 1/2
             }],
             listeners: {
-                itemclick: "onItemClickInItemToProduceGrid"
+                itemclick: "onItemClickInItemGrid"
             }
         }]
     },{

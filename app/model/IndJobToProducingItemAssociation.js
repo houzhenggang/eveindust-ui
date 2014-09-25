@@ -1,7 +1,7 @@
 Ext.define("EVEInDust.model.IndJobToProducingItemAssociation", {
     extend: "Ext.data.Model",
     uses: [
-        'EVEInDust.model.ItemToProduce'
+        'EVEInDust.model.Item'
     ],
     idProperty: "id",
     fields: [
@@ -16,7 +16,7 @@ Ext.define("EVEInDust.model.IndJobToProducingItemAssociation", {
             persist: false
         },
         {
-            name: "item_to_produce_id",
+            name: "item_id",
             type: "int",
             useNull: true
         }
@@ -30,13 +30,13 @@ Ext.define("EVEInDust.model.IndJobToProducingItemAssociation", {
     associations: [
         {
             type: 'belongsTo',
-            name: 'itemToProduce',
-            associationKey: 'itemToProduce',
-            foreignKey: 'item_to_produce_id',
-            instanceName: 'itemToProduce',
-            model: 'EVEInDust.model.ItemToProduce',
-            getterName: 'getItemToProduce',
-            setterName: 'setItemToProduce'
+            name: 'item',
+            associationKey: 'item',
+            foreignKey: 'item_id',
+            instanceName: 'item',
+            model: 'EVEInDust.model.Item',
+            getterName: 'getItem',
+            setterName: 'setItem'
         }
     ],
     proxy: {

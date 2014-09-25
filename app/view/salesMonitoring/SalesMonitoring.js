@@ -104,22 +104,9 @@ Ext.define("EVEInDust.view.salesMonitoring.SalesMonitoring",{
         title: "Продаваемые товары",
         flex: 1,
         store:{
+            model: "EVEInDust.model.Item",
             pageSize: 0,
-            remoteFilter: true,
-            fields: [
-                { name: "id", type: "int"},
-                { name: "typeId", type: "int"},
-                { name: "itemsSold", type: "int"},
-                { name: "itemsRemains", type: "int"},
-                { name: "income", type: "int"}
-            ],
-            proxy: {
-                "type": "rest",
-                "url": "/api/itemsale",
-                "actionMethods": {"update": "PATCH", "read": "GET", "create": "POST", "destroy": "DELETE"},
-                "reader": {"rootProperty": "data", "type": "json", "messageProperty": "message"},
-                "writer": {"type": "json", "writeRecordId": false, "writeAllFields": false, "dateFormat": "Y-m-d\\TH:i:sO"}
-            }
+            remoteFilter: true
         },
         columns: [{
             header: "Название",
@@ -134,13 +121,49 @@ Ext.define("EVEInDust.view.salesMonitoring.SalesMonitoring",{
             }
         },{
             header: "Остаток (шт)",
-            dataIndex: "itemsRemains"
+            dataIndex: "remainsQuantity"
         },{
             header: "Продано (шт)",
-            dataIndex: "itemsSold"
+            dataIndex: "soldQuantity"
+        },{
+            header: "Себестоимость",
+            dataIndex: "unitPrimeCost"
+        },{
+            header: "Ср. цена",
+            dataIndex: "avgSellPrice"
         },{
             header: "Доход (ISK)",
             dataIndex: "income"
+        },{
+            header: "Общ. затраты",
+            dataIndex: "overallExpenses"
+        },{
+            header: "Прибыль",
+            renderer: function(emptyValue, meta, item){
+                if(+item.get("remainsQuantity") === 0) {
+                    return item.get("income")-item.get("overallExpenses");
+                } else {
+                    return "";
+                }
+            }
+        },{
+            header: "Прибыль/шт",
+            renderer: function(emptyValue, meta, item){
+                if(+item.get("remainsQuantity") === 0) {
+                    return (item.get("income")-item.get("overallExpenses"))/item.get("count");
+                } else {
+                    return "";
+                }
+            }
+        },{
+            header: "Прибыль в %",
+            renderer: function(emptyValue, meta, item){
+                if(+item.get("remainsQuantity") === 0) {
+                    return ((item.get("income")/item.get("overallExpenses")-1)*100) + "%"
+                } else {
+                    return "";
+                }
+            }
         }]
     }]
 

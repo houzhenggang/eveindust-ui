@@ -129,7 +129,12 @@ Ext.define("EVEInDust.view.orderCreator.OrderCreator",{
                 dataIndex: "typeId",
                 flex: 2,
                 renderer: function(typeId) {
-                    return Ext.getStore("eveoj.InvTypes").findRecord("typeId",typeId).get("typeName");
+                    var record = Ext.getStore("eveoj.InvTypes").findRecord("typeId",typeId);
+                    if(record) {
+                        return record.get("typeName");
+                    } else {
+                        return typeId;
+                    }
                 },
                 editor: {
                     xtype: "combo",
@@ -137,7 +142,6 @@ Ext.define("EVEInDust.view.orderCreator.OrderCreator",{
                     queryMode: 'local',
                     store: "eveoj.InvTypes",
                     displayField: 'typeName',
-                    minChars: "2",
                     valueField: 'typeId',
                     forceSelection: true,
                     typeAhead: true,

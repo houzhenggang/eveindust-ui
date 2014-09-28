@@ -25,8 +25,8 @@ Ext.define("EVEInDust.view.profitOfBPO.ProfitOfBPO", {
                 {name: "typeId", type: "int"},
                 {name: "materialEfficiency", type: "int"},
                 {name: "timeEfficiency", type: "int"},
-                {name: "profit", type: "int"},
-                {name: "profitInPercents", type: "int"}
+                {name: "profitInPercents", type: "int"},
+                {name: "profitPerHour", type: "int"}
             ],
             autoLoad: true,
             remoteFilter: true,
@@ -46,31 +46,25 @@ Ext.define("EVEInDust.view.profitOfBPO.ProfitOfBPO", {
         },
         columns: [{
             header: "Название",
-            dataIndex: "typeId",
-            renderer: function(typeId) {
-                var record = Ext.getStore("eveoj.InvTypes").findRecord("typeId",typeId);
-                if(record){
-                    return record.get("typeName");
-                } else {
-                    return typeId;
-                }
-            }
+            dataIndex: "typeName"
         }, {
             header: "ME",
             dataIndex: "materialEfficiency"
         }, {
             header: "PE",
             dataIndex: "timeEfficiency"
-        }, {
-            header: "Ожид. прибыль",
-            dataIndex: "profit",
+        },{
+            header: "Ожид прибыль/ч",
+            dataIndex: "profitPerHour",
             xtype: "numbercolumn",
-            format: "0,000.00"
+            format: "0,000.00",
+            align: "right"
         }, {
-            header: "Ожид. прбиль %",
+            header: "Ожид. прибыль %",
             dataIndex: "profitInPercents",
             xtype: "numbercolumn",
-            format: "0,000.00"
+            format: "0,000.00",
+            align: "right"
         }]
     }]
 });

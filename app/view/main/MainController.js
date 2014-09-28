@@ -5,7 +5,8 @@ Ext.define('EVEInDust.view.main.MainController', {
         'Ext.MessageBox',
         "EVEInDust.view.orderCreator.OrderCreator",
         "EVEInDust.view.tradeHubEditor.TradeHubEditor",
-        "EVEInDust.view.salesMonitoring.SalesMonitoring"
+        "EVEInDust.view.salesMonitoring.SalesMonitoring",
+        "EVEInDust.view.profitOfBPO.ProfitOfBPO"
     ],
 
     alias: 'controller.main',
@@ -18,5 +19,8 @@ Ext.define('EVEInDust.view.main.MainController', {
     },
     onClickSalesMonitoringButton: function(){
         Ext.widget("SalesMonitoring").show();
+    },
+    onClickProfitOfBPOButton: function(){
+        Ext.widget("ProfitOfBPO").show();
     }
 }, null);

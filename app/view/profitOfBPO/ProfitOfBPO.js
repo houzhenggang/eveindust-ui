@@ -10,7 +10,7 @@ Ext.define("EVEInDust.view.profitOfBPO.ProfitOfBPO", {
         "EVEInDust.view.profitOfBPO.ProfitOfBPOModel"
     ],
     title: "Прибыльность BPO",
-    width: 400,
+    width: 700,
     height: 400,
     closable: true,
     layout: {
@@ -25,8 +25,9 @@ Ext.define("EVEInDust.view.profitOfBPO.ProfitOfBPO", {
                 {name: "typeId", type: "int"},
                 {name: "materialEfficiency", type: "int"},
                 {name: "timeEfficiency", type: "int"},
-                {name: "profitInPercents", type: "int"},
-                {name: "profitPerHour", type: "int"}
+                {name: "profitInPercents", type: "number"},
+                {name: "profitPerHour", type: "number"},
+                {name: "avgVolume", type: "number"}
             ],
             autoLoad: true,
             remoteFilter: true,
@@ -46,25 +47,44 @@ Ext.define("EVEInDust.view.profitOfBPO.ProfitOfBPO", {
         },
         columns: [{
             header: "Название",
-            dataIndex: "typeName"
+            dataIndex: "typeName",
+            flex: 2
         }, {
             header: "ME",
-            dataIndex: "materialEfficiency"
+            dataIndex: "materialEfficiency",
+            xtype: "numbercolumn",
+            format: "0,000",
+            flex: 1/2,
+            align: "right"
+
         }, {
             header: "PE",
-            dataIndex: "timeEfficiency"
+            dataIndex: "timeEfficiency",
+            xtype: "numbercolumn",
+            format: "0,000",
+            flex: 1/2,
+            align: "right"
         },{
-            header: "Ожид прибыль/ч",
+            header: "Объем",
+            dataIndex: "avgVolume",
+            xtype: "numbercolumn",
+            format: "0,000",
+            align: "right",
+            flex: 1
+        },{
+            header: "ISK/ч",
             dataIndex: "profitPerHour",
             xtype: "numbercolumn",
             format: "0,000.00",
-            align: "right"
+            align: "right",
+            flex: 1
         }, {
-            header: "Ожид. прибыль %",
+            header: "%",
             dataIndex: "profitInPercents",
             xtype: "numbercolumn",
             format: "0,000.00",
-            align: "right"
+            align: "right",
+            flex: 1
         }]
     }]
 });

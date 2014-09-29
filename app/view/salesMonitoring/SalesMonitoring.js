@@ -12,7 +12,7 @@ Ext.define("EVEInDust.view.salesMonitoring.SalesMonitoring",{
         "EVEInDust.view.salesMonitoring.SalesMonitoringModel"
     ],
     title: "Мониторинг реализации заказов",
-    width: 700,
+    width: 1050,
     height: 650,
     closable: true,
     layout: {
@@ -31,6 +31,14 @@ Ext.define("EVEInDust.view.salesMonitoring.SalesMonitoring",{
                 edit: 'onEditOrderRowComplete'
             }
         }],
+        bbar: {
+            items: [{
+                iconCls: "x-tbar-loading",
+                handler: function(button){
+                    button.up("grid").getStore().load();
+                }
+            }]
+        },
         store: {
             model: "EVEInDust.model.Order",
             pageSize: 0,
@@ -100,6 +108,14 @@ Ext.define("EVEInDust.view.salesMonitoring.SalesMonitoring",{
             model: "EVEInDust.model.Item",
             pageSize: 0,
             remoteFilter: true
+        },
+        bbar: {
+            items: [{
+                iconCls: "x-tbar-loading",
+                handler: function(button){
+                    button.up("grid").getStore().load();
+                }
+            }]
         },
         viewConfig: {
             stripeRows: false,

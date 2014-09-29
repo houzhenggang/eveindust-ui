@@ -1,4 +1,3 @@
-
 Ext.define("EVEInDust.view.salesMonitoring.SalesMonitoring",{
     extend: "Ext.window.Window",
     xtype: "SalesMonitoring",
@@ -51,7 +50,8 @@ Ext.define("EVEInDust.view.salesMonitoring.SalesMonitoring",{
         },
         columns: [{
             header: "#",
-            dataIndex: "id"
+            dataIndex: "id",
+            flex: 1/2
         },{
             header: "Хаб",
             dataIndex: "stationId",
@@ -63,7 +63,8 @@ Ext.define("EVEInDust.view.salesMonitoring.SalesMonitoring",{
                 } else {
                     return stationId;
                 }
-            }
+            },
+            flex: 1
         },{
             header: "Дата готовности",
             dataIndex: "readyDate",
@@ -73,7 +74,8 @@ Ext.define("EVEInDust.view.salesMonitoring.SalesMonitoring",{
                 xtype: "datefield",
                 format: "Y-m-d H:i:s",
                 allowBlank: true
-            }
+            },
+            flex: 2
         },{
             header: "Дата нач. реализ.",
             dataIndex: "startSellingDate",
@@ -83,17 +85,8 @@ Ext.define("EVEInDust.view.salesMonitoring.SalesMonitoring",{
                 xtype: "datefield",
                 format: "Y-m-d H:i:s",
                 allowBlank: true
-            }
-        },{
-            header: "Дата оконч. реализ.",
-            dataIndex: "endSellingDate",
-            xtype: "datecolumn",
-            format: "Y-m-d H:i:s",
-            editor: {
-                xtype: "datefield",
-                format: "Y-m-d H:i:s",
-                allowBlank: true
-            }
+            },
+            flex: 2
         }],
         listeners: {
             itemclick: "onItemClickInOrderGrid"
@@ -108,9 +101,25 @@ Ext.define("EVEInDust.view.salesMonitoring.SalesMonitoring",{
             pageSize: 0,
             remoteFilter: true
         },
+        viewConfig: {
+            stripeRows: false,
+            getRowClass: function(item) {
+                var percent;
+                if(+item.get("remainsQuantity") === 0) {
+                    percent = (item.get("income")/item.get("overallExpenses")-1)*100;
+                    if(percent < 0)
+                        return "red";
+                    else
+                        return "little-green";
+                } else {
+                    return "";
+                }
+            }
+        },
         columns: [{
             header: "Название",
             dataIndex: "typeId",
+            flex: 2,
             renderer: function(typeId) {
                 var record = Ext.getStore("eveoj.InvTypes").findRecord("typeId",typeId);
                 if(record){
@@ -120,50 +129,66 @@ Ext.define("EVEInDust.view.salesMonitoring.SalesMonitoring",{
                 }
             }
         },{
+            xtype: "numbercolumn",
             header: "Остаток (шт)",
-            dataIndex: "remainsQuantity"
+            dataIndex: "remainsQuantity",
+            format: "0,000",
+            align: "right"
         },{
+            xtype: "numbercolumn",
             header: "Продано (шт)",
-            dataIndex: "soldQuantity"
+            dataIndex: "soldQuantity",
+            format: "0,000",
+            align: "right"
         },{
             header: "Себестоимость",
-            dataIndex: "unitPrimeCost"
+            xtype: "numbercolumn",
+            dataIndex: "unitPrimeCost",
+            format: "0,000.00",
+            align: "right"
         },{
             header: "Ср. цена",
-            dataIndex: "avgSellPrice"
+            xtype: "numbercolumn",
+            dataIndex: "avgSellPrice",
+            format: "0,000.00",
+            align: "right"
         },{
             header: "Доход (ISK)",
-            dataIndex: "income"
+            xtype: "numbercolumn",
+            dataIndex: "income",
+            format: "0,000.00",
+            align: "right",
+            flex: 3/2
         },{
             header: "Общ. затраты",
-            dataIndex: "overallExpenses"
+            xtype: "numbercolumn",
+            dataIndex: "overallExpenses",
+            format: "0,000.00",
+            align: "right",
+            flex: 3/2
         },{
             header: "Прибыль",
+            xtype: "numbercolumn",
             renderer: function(emptyValue, meta, item){
                 if(+item.get("remainsQuantity") === 0) {
-                    return item.get("income")-item.get("overallExpenses");
+                    return Ext.util.Format.number(item.get("income")-item.get("overallExpenses"),"0,000.00");
                 } else {
                     return "";
                 }
-            }
-        },{
-            header: "Прибыль/шт",
-            renderer: function(emptyValue, meta, item){
-                if(+item.get("remainsQuantity") === 0) {
-                    return (item.get("income")-item.get("overallExpenses"))/item.get("count");
-                } else {
-                    return "";
-                }
-            }
+            },
+            align: "right",
+            flex: 3/2
         },{
             header: "Прибыль в %",
+            xtype: "numbercolumn",
             renderer: function(emptyValue, meta, item){
                 if(+item.get("remainsQuantity") === 0) {
-                    return ((item.get("income")/item.get("overallExpenses")-1)*100) + "%"
+                    return Ext.util.Format.number((item.get("income")/item.get("overallExpenses")-1)*100,"0.00")+"%"
                 } else {
                     return "";
                 }
-            }
+            },
+            align: "right"
         }]
     }]
 

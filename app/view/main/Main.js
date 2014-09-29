@@ -34,6 +34,9 @@ Ext.define('EVEInDust.view.main.Main', {
             },{
                 text: "Прибыльность BPO",
                 handler: "onClickProfitOfBPOButton"
+            },{
+                text: "Мониторинг персонажей",
+                handler: "onClickCharactersMonitorButton"
             }]
         }
     }]

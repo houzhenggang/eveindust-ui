@@ -45,6 +45,16 @@ Ext.define("EVEInDust.view.profitOfBPO.ProfitOfBPO", {
                 "writer": {"type": "json", "writeRecordId": false, "writeAllFields": false, "dateFormat": "Y-m-d\\TH:i:sO"}
             }
         },
+        viewConfig: {
+            stripeRows: false,
+            getRowClass: function(record) {
+                if(+record.get("profitPerHour") < 0) {
+                    return "red";
+                } else {
+                    return "little-green";
+                }
+            }
+        },
         columns: [{
             header: "Название",
             dataIndex: "typeName",

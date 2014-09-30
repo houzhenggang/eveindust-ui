@@ -14,6 +14,24 @@ Ext.define('EVEInDust.view.orderCreator.OrderCreatorController', {
         ordersGrid.getStore().insert(0, [order]);
         ordersGrid.findPlugin("rowediting").startEdit(order,0);
     },
+    onClickCloseOrderButton: function(button){
+        var ordersGrid = this.lookupReference('orders-grid'),
+            order = ordersGrid.getSelection()[0]
+            ;
+        ordersGrid.setLoading(true);
+        order.setStatus(Ext.getStore("OrderStatuses").getById(EVEInDust.common.OrderStatuses.WaitingForProduce));
+        order.save({
+            success: function(){
+                ordersGrid.getStore().load();
+            },
+            failure: function(){
+                order.reject();
+            },
+            callback: function(){
+                ordersGrid.setLoading(false);
+            }
+        })
+    },
     onEditOrderRowComplete: EVEInDust.Common.onEditModelRowComplete(),
     onCancelEditOrderRow: EVEInDust.Common.onCancelEditModelRow,
     onClickDeleteOrderButton: function(){
@@ -155,24 +173,77 @@ Ext.define('EVEInDust.view.orderCreator.OrderCreatorController', {
         }
     },
     onClickAssociateJobToProducingItemButton: function (button) {
-        var association,
+        var i, selectedJobs,
+            jobIds = [],
+            item = this.lookupReference("items-grid").getSelection()[0],
             notAssociatedJobsGrid = this.lookupReference("notAssociatedJobs-grid"),
             me = this
         ;
         button.disable();
-        association = new EVEInDust.model.IndJobToProducingItemAssociation();
-        association.setItem(this.lookupReference("items-grid").getSelection()[0]);
-        association.set("jobId",notAssociatedJobsGrid.getSelection()[0].get("jobId"));
-        
-        association.save({
-            success: function () {
-                notAssociatedJobsGrid.getStore().load();
-                me.lookupReference("associatedJobs-grid").getStore().load();
-            },
-            callback: function () {
-                button.enable();
-            }
+        selectedJobs = notAssociatedJobsGrid.getSelection();
+        for(i = 0; i < selectedJobs.length;i++) {
+            jobIds.push(selectedJobs[i].get("jobId"));
+        }
+
+        this.saveAnyAmountOfAssociatedJobs(item,jobIds,function(){
+            notAssociatedJobsGrid.getStore().load();
+            me.lookupReference("associatedJobs-grid").getStore().load();
+            button.enable();
         });
+    },
+    /**
+     *
+     * @param item
+     * @param jobIds
+     * @param callback
+     */
+    saveAnyAmountOfAssociatedJobs: function(item, jobIds, callback){
+        var progress, saver;
+
+        if(jobIds.length > 0) {
+            progress = Ext.Msg.show({
+                title: "Привязывание работ",
+                message: "Привязывание работы #"+jobIds[0],
+                progressText: "1 из "+jobIds.length,
+                progress: true,
+                closable: false,
+                modal: true
+            });
+            saver = function saver(jobIdIndex){
+                var association;
+                if(jobIdIndex < jobIds.length) {
+                    association = new EVEInDust.model.IndJobToProducingItemAssociation();
+                    association.setItem(item);
+                    association.set("jobId",jobIds[jobIdIndex]);
+
+                    var indexForHumans = (jobIdIndex+1);
+                    progress.updateProgress(indexForHumans/jobIds.length,indexForHumans+" из "+jobIds.length,"Привязывание работы #"+jobIds[jobIdIndex]);
+
+                    association.save({
+                        success: function () {
+                            saver(jobIdIndex+1);
+                        },
+                        failure: function(){
+                            progress.close();
+                            Ext.Msg.show({
+                                title: "Ошибка",
+                                msg: "Не удалось связать все работы. Проблема с работой #"+jobIds[jobIdIndex],
+                                icon: Ext.Msg.ERROR,
+                                buttons: Ext.Msg.OK
+                            });
+                            callback();
+                        }
+                    });
+                } else {
+                    progress.close();
+                    callback();
+                }
+            };
+            saver(0);
+        } else {
+            callback();
+        }
+
     },
     onClickDisassociateJobFromProducingItemButton: function(button) {
         var store,
@@ -224,26 +295,5 @@ Ext.define('EVEInDust.view.orderCreator.OrderCreatorController', {
                 });
             }
         });
-    },
-    onClickCloseOrderButton: function(button){
-        var ordersGrid = this.lookupReference('orders-grid'),
-            order = ordersGrid.getSelection()[0]
-        ;
-        ordersGrid.setLoading(true);
-        button.disable();
-        order.setStatus(Ext.getStore("OrderStatuses").getById(EVEInDust.common.OrderStatuses.WaitingForProduce));
-        order.save({
-            success: function(){
-                ordersGrid.getStore().load();
-            },
-            failure: function(){
-                order.reject();
-            },
-            callback: function(){
-                button.enable();
-                ordersGrid.setLoading(false);
-            }
-        })
     }
-    
 });

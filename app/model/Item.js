@@ -26,6 +26,11 @@ Ext.define("EVEInDust.model.Item", {
         {
             name: "order_id",
             type: "int"
+        },{
+            name: "lastTransactionDatetime",
+            type: "date",
+            dateFormat: "Y-m-d\\TH:i:sO",
+            useNull: true
         }
     ],
     validations: [

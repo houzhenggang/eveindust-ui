@@ -242,6 +242,9 @@ Ext.define("EVEInDust.view.orderCreator.OrderCreator",{
                 }
             }]
         },
+        selModel: {
+            mode: "MULTI"
+        },
         store: {
             model: 'EVEInDust.model.yapeal.CorpIndustryJob',
             remoteFilter: true,

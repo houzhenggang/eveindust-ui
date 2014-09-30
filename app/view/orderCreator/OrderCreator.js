@@ -42,8 +42,8 @@ Ext.define("EVEInDust.view.orderCreator.OrderCreator",{
             }],
             store: {
                 model: 'EVEInDust.model.Order',
-                remoteSort: true,
                 remoteFilter: true,
+                pageSize: 0,
                 autoLoad: true,
                 filters: [{
                     id: "status",
@@ -65,7 +65,8 @@ Ext.define("EVEInDust.view.orderCreator.OrderCreator",{
                 }]
             },
             listeners: {
-                itemclick: "onItemClickInOrdersGrid"
+                itemclick: "onItemClickInOrdersGrid",
+                selectionchange: "onSelectionChangeInOrdersGrid"
             },
             columns: [{
                 header: "#",
@@ -101,11 +102,12 @@ Ext.define("EVEInDust.view.orderCreator.OrderCreator",{
             xtype: "grid",
             title: "Предметы для произв-ва",
             flex: 2,
+            hidden: true,
             reference: "items-grid",
             store: {
                 model: 'EVEInDust.model.Item',
-                remoteSort: true,
-                remoteFilter: true
+                remoteFilter: true,
+                pageSize: 0
             },
             plugins: [{
                 ptype: 'rowediting',
@@ -118,10 +120,15 @@ Ext.define("EVEInDust.view.orderCreator.OrderCreator",{
             tbar: {
                 items:[{
                     text: "Создать",
-                    handler: "onClickCreateItemItem"
+                    handler: "onClickCreateItem"
                 },{
                     text: "Удалить",
                     handler: "onClickDeleteItemItem"
+                },{
+                    iconCls: "x-tbar-loading",
+                    handler: function(button){
+                        button.up("grid").getStore().load();
+                    }
                 }]
             },
             columns: [{
@@ -159,17 +166,24 @@ Ext.define("EVEInDust.view.orderCreator.OrderCreator",{
                 flex: 1/2
             }],
             listeners: {
-                itemclick: "onItemClickInItemGrid"
+                itemclick: "onItemClickInItemGrid",
+                selectionchange: "onSelectionChangeInItemsGrid"
             }
         }]
     },{
         xtype: "grid",
         flex: 1,
         title: "Привязанные работы",
+        hidden: true,
         tbar: {
             items:[{
                 text: "Отвязать",
                 handler: "onClickDisassociateJobFromProducingItemButton"
+            },{
+                iconCls: "x-tbar-loading",
+                handler: function(button){
+                    button.up("grid").getStore().load();
+                }
             }]
         },
         reference: "associatedJobs-grid",
@@ -215,23 +229,24 @@ Ext.define("EVEInDust.view.orderCreator.OrderCreator",{
         xtype: "grid",
         flex: 1,
         title: "Непривязанные работы",
+        hidden: true,
         reference: "notAssociatedJobs-grid",
         tbar: {
             items:[{
                 text: "Привязать",
                 handler: "onClickAssociateJobToProducingItemButton"
+            },{
+                iconCls: "x-tbar-loading",
+                handler: function(button){
+                    button.up("grid").getStore().load();
+                }
             }]
         },
         store: {
             model: 'EVEInDust.model.yapeal.CorpIndustryJob',
-            remoteSort: true,
-            remoteFilter: true
+            remoteFilter: true,
+            pageSize: 0
         },
-        dockedItems: [{
-            xtype: 'pagingtoolbar',
-            dock: 'bottom',
-            displayInfo: true
-        }],
         columns: [{
             header: "Дата окончания",
             xtype: "datecolumn",
@@ -263,10 +278,6 @@ Ext.define("EVEInDust.view.orderCreator.OrderCreator",{
         listeners: {
             afterrender: function(grid) {
                 EVEInDust.Common.changeUrlOfProxyInStore(grid.getStore(),"/api/yapeal/notassociatedcorpindustryjobs");
-
-                // я привязываю хранилище тут, потому что не знаю как привязать его другим способом, если настройки хранилища
-                // таблицы указывать прямо в самой таблице...
-                this.getDockedItems("pagingtoolbar")[0].bindStore(this.getStore());
             }
         }
     }]

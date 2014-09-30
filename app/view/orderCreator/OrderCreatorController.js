@@ -7,11 +7,12 @@ Ext.define('EVEInDust.view.orderCreator.OrderCreatorController', {
     alias: 'controller.OrderCreator',
     onClickCreateOrderButton: function(){
         var ordersGrid = this.lookupReference("orders-grid"),
-            record = new EVEInDust.model.Order()
+            order = new EVEInDust.model.Order()
         ;
-        record.setStatus(Ext.getStore("OrderStatuses").getById(1));
-        ordersGrid.getStore().insert(0, [record]);
-        ordersGrid.findPlugin("rowediting").startEdit(record,0);
+        order.setStatus(Ext.getStore("OrderStatuses").getById(1));
+        ordersGrid.getSelectionModel().deselectAll();
+        ordersGrid.getStore().insert(0, [order]);
+        ordersGrid.findPlugin("rowediting").startEdit(order,0);
     },
     onEditOrderRowComplete: EVEInDust.Common.onEditModelRowComplete(),
     onCancelEditOrderRow: EVEInDust.Common.onCancelEditModelRow,
@@ -19,17 +20,54 @@ Ext.define('EVEInDust.view.orderCreator.OrderCreatorController', {
         EVEInDust.Common.deleteSelectedItemInGrid(this.lookupReference("orders-grid"),"Удаление заказа не удалось");
     },
     onItemClickInOrdersGrid: function(ordersGrid, order) {
-        this.lookupReference("items-grid").getStore().addFilter({
-            id: "order",
-            property: "order",
-            value: order.getId()
-        });
+        var itemsGrid = this.lookupReference("items-grid"),
+            loadAnotherOrderData = true,
+            filters, orderIdOfLoadingStore
+        ;
+
+        // показываем таблицу с предметами принеобходимости
+        if(itemsGrid.isHidden()){
+            itemsGrid.show();
+        }
+
+        // проверяем не задан ли тот же фильтр, что хотим задать мы. Т.о. предотвращаем повторную загрузку одних и
+        // тех же данных
+        filters = itemsGrid.getStore().getFilters();
+        if(filters.count() > 0 && filters.containsKey("order") && filters.get("order").getValue() === order.getId()) {
+            loadAnotherOrderData = false;
+        }
+
+        if(loadAnotherOrderData) {
+            if(itemsGrid.getStore().isLoading()) {
+                orderIdOfLoadingStore = filters.get("order").getValue();
+                Ext.Msg.alert("Не торопитесь","Дождитесь загрузки заказа #"+orderIdOfLoadingStore+" прежде чем загружать заказ #"+order.getId());
+                ordersGrid.getSelectionModel().select(ordersGrid.getStore().getById(orderIdOfLoadingStore))
+            } else {
+                // т.к. в таблицу с предметами будут загружаться новые данные, то в связи с этим необходимо
+                // спрятать таблицы с работами
+                this.lookupReference("associatedJobs-grid").hide();
+                this.lookupReference("notAssociatedJobs-grid").hide();
+                itemsGrid.getStore().addFilter({
+                    id: "order",
+                    property: "order",
+                    value: order.getId()
+                });
+            }
+        }
     },
-    onClickCreateItemItem: function(){
+    onSelectionChangeInOrdersGrid: function(ordersGrid, selectedItems){
+        if(selectedItems.length === 0) {
+            this.lookupReference("items-grid").hide();
+            this.lookupReference("associatedJobs-grid").hide();
+            this.lookupReference("notAssociatedJobs-grid").hide();
+        }
+    },
+    onClickCreateItem: function(){
         var itemsGrid = this.lookupReference("items-grid"),
             item = new EVEInDust.model.Item()
         ;
         item.setOrder(this.lookupReference("orders-grid").getSelection()[0]);
+        itemsGrid.getSelectionModel().deselectAll();
         itemsGrid.getStore().insert(0, [item]);
         itemsGrid.findPlugin("rowediting").startEdit(item,0);
     },
@@ -38,30 +76,83 @@ Ext.define('EVEInDust.view.orderCreator.OrderCreatorController', {
     },
     onCancelEditItemRow: EVEInDust.Common.onCancelEditModelRow,
     onEditItemRowComplete: EVEInDust.Common.onEditModelRowComplete(),
-    onItemClickInItemGrid: function(grid, item){
-        this.getViewModel().getStore('industry_activity_products').addFilter([{
-            id: "productTypeId",
-            property: "productTypeId",
-            value: item.get("typeId")
-        },{
-            id: "activityId",
-            property: "activityId",
-            value: EVEInDust.common.IndustryActivity.Manufacturing
-        }]);
-        this.lookupReference("associatedJobs-grid").getStore().addFilter({
-            id: "item",
-            property: "item",
-            value: item.getId()
-        });
-        this.lookupReference("notAssociatedJobs-grid").getStore().addFilter([{
-            id: "productTypeId",
-            property: "productTypeId",
-            value: item.get("typeId")
-        },{
-            id: "activityId",
-            property: "activityId",
-            value: EVEInDust.common.IndustryActivity.Manufacturing
-        }]);
+    onItemClickInItemGrid: function(itemsGrid, item){
+        var associatedJobsGrid = this.lookupReference("associatedJobs-grid"),
+            notAssociatedJobsGrid = this.lookupReference("notAssociatedJobs-grid"),
+            associatedJobsStoreFilters = associatedJobsGrid.getStore().getFilters(),
+            isAssociatedJobsStoreNecessaryLoading = true,
+            notAssociatedJobsStoreFilters = notAssociatedJobsGrid.getStore().getFilters(),
+            isNotAssociatedJobsStoreNecessaryLoading = true,
+            itemIdOfLoadingAssociatedJobs
+        ;
+        if(associatedJobsGrid.isHidden()){
+            associatedJobsGrid.show();
+        }
+        if(notAssociatedJobsGrid.isHidden()) {
+            notAssociatedJobsGrid.show()
+        }
+
+        if(
+            associatedJobsStoreFilters.count() > 0 &&
+                associatedJobsStoreFilters.containsKey("item") &&
+                associatedJobsStoreFilters.get("item").getValue() === item.getId()
+            ) {
+            isAssociatedJobsStoreNecessaryLoading = false;
+        }
+        if(
+            notAssociatedJobsStoreFilters.count() > 0 &&
+                notAssociatedJobsStoreFilters.containsKey("productTypeId") &&
+                notAssociatedJobsStoreFilters.get("productTypeId").getValue() === item.get("typeId")
+            ) {
+            isNotAssociatedJobsStoreNecessaryLoading = false;
+        }
+
+
+        if( isAssociatedJobsStoreNecessaryLoading || isNotAssociatedJobsStoreNecessaryLoading ) {
+            if((associatedJobsGrid.getStore().isLoading() || notAssociatedJobsGrid.getStore().isLoading())) {
+                itemIdOfLoadingAssociatedJobs = associatedJobsStoreFilters.get("item").getValue();
+                Ext.Msg.alert("Не торопитесь","Дождитесь загрузки данных о предмете #"+itemIdOfLoadingAssociatedJobs+" прежде чем загружать данные о #"+item.getId());
+                itemsGrid.getSelectionModel().select(itemsGrid.getStore().getById(itemIdOfLoadingAssociatedJobs))
+            } else {
+                if(isAssociatedJobsStoreNecessaryLoading) {
+                    associatedJobsGrid.getStore().addFilter({
+                        id: "item",
+                        property: "item",
+                        value: item.getId()
+                    });
+                }
+                if(isNotAssociatedJobsStoreNecessaryLoading) {
+                    notAssociatedJobsGrid.getStore().addFilter([{
+                        id: "productTypeId",
+                        property: "productTypeId",
+                        value: item.get("typeId")
+                    },{
+                        id: "activityId",
+                        property: "activityId",
+                        value: EVEInDust.common.IndustryActivity.Manufacturing
+                    }]);
+                }
+
+                this.getViewModel().getStore('industry_activity_products').addFilter([{
+                    id: "productTypeId",
+                    property: "productTypeId",
+                    value: item.get("typeId")
+                },{
+                    id: "activityId",
+                    property: "activityId",
+                    value: EVEInDust.common.IndustryActivity.Manufacturing
+                }]);
+            }
+        }
+
+
+
+    },
+    onSelectionChangeInItemsGrid: function(itemsGrid, selectedItems) {
+        if(selectedItems.length === 0) {
+            this.lookupReference("associatedJobs-grid").hide();
+            this.lookupReference("notAssociatedJobs-grid").hide();
+        }
     },
     onClickAssociateJobToProducingItemButton: function (button) {
         var association,

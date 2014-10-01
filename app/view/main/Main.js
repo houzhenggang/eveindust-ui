@@ -37,6 +37,9 @@ Ext.define('EVEInDust.view.main.Main', {
             },{
                 text: "Мониторинг персонажей",
                 handler: "onClickCharactersMonitorButton"
+            },{
+                text: "Обзор BPC",
+                handler: "onClickOverviewBPCRuns"
             }]
         }
     }]

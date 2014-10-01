@@ -38,9 +38,11 @@ Ext.define("EVEInDust.view.profitOfBPO.ProfitOfBPO", {
                 value: "-1"
             }],
             proxy: {
+                extraParams: {
+                    jmsgroup: JSON.stringify(["profitForecast"])
+                },
                 "type": "rest",
                 "url": "/api/corpblueprints",
-                "actionMethods": {"update": "PATCH", "read": "GET", "create": "POST", "destroy": "DELETE"},
                 "reader": {"rootProperty": "data", "type": "json", "messageProperty": "message"},
                 "writer": {"type": "json", "writeRecordId": false, "writeAllFields": false, "dateFormat": "Y-m-d\\TH:i:sO"}
             }

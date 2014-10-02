@@ -10,7 +10,7 @@ Ext.define("EVEInDust.view.overviewBPCRuns.OverviewBPCRuns", {
         "EVEInDust.view.overviewBPCRuns.OverviewBPCRunsModel"
     ],
     title: "Обзор BPC",
-    width: 300,
+    width: 500,
     height: 400,
     closable: true,
     layout: {
@@ -23,7 +23,10 @@ Ext.define("EVEInDust.view.overviewBPCRuns.OverviewBPCRuns", {
         store: {
             fields: [
                 {name: "typeName", type: "string"},
-                {name: "runs", type: "int"}
+                {name: "free", type: "int"},
+                {name: "involved", type: "int"},
+                {name: "copying", type: "int"}
+
             ],
             autoLoad: true,
             remoteFilter: true,
@@ -40,11 +43,25 @@ Ext.define("EVEInDust.view.overviewBPCRuns.OverviewBPCRuns", {
             dataIndex: "typeName",
             flex: 2
         }, {
-            header: "Runs",
-            dataIndex: "runs",
+            header: "Свободные",
+            dataIndex: "free",
             xtype: "numbercolumn",
             format: "0,000",
-            flex: 1/2,
+            flex: 1,
+            align: "right"
+        }, {
+            header: "В производстве",
+            dataIndex: "involved",
+            xtype: "numbercolumn",
+            format: "0,000",
+            flex: 1,
+            align: "right"
+        }, {
+            header: "Копируются",
+            dataIndex: "copying",
+            xtype: "numbercolumn",
+            format: "0,000",
+            flex: 1,
             align: "right"
         }]
     }]

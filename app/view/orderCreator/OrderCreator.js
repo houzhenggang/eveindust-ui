@@ -171,60 +171,103 @@ Ext.define("EVEInDust.view.orderCreator.OrderCreator",{
             }
         }]
     },{
-        xtype: "grid",
+        xtype: "panel",
         flex: 1,
-        title: "Привязанные работы",
-        hidden: true,
-        tbar: {
-            items:[{
-                text: "Отвязать",
-                handler: "onClickDisassociateJobFromProducingItemButton"
-            },{
-                iconCls: "x-tbar-loading",
-                handler: function(button){
-                    button.up("grid").getStore().load();
-                }
-            }]
+        layout: {
+            type: "hbox",
+            align: "stretch"
         },
-        reference: "associatedJobs-grid",
-        store: {
-            model: 'EVEInDust.model.yapeal.CorpIndustryJob',
-            remoteSort: true,
-            remoteFilter: true
-        },
-        columns: [{
-            header: "Дата окончания",
-            xtype: "datecolumn",
-            format: "Y-m-d H:i:s",
-            dataIndex: "endDate",
-            flex: 1
-        },{
-            header: "Кол-во",
-            dataIndex: "runs",
+        items: [{
+            xtype: "grid",
             flex: 1,
-            renderer: function(runsCount, meta, record, rowIndex, colIndex, store, view) {
-                var indActivityRecord = this.up('window').getViewModel().getStore('industry_activity_products').findRecord("productTypeId",record.get("productTypeId")),
-                    result = runsCount
-                ;
+            title: "Привязанные работы",
+            hidden: true,
+            tbar: {
+                items:[{
+                    text: "Отвязать",
+                    handler: "onClickDisassociateJobFromProducingItemButton"
+                },{
+                    iconCls: "x-tbar-loading",
+                    handler: function(button){
+                        button.up("grid").getStore().load();
+                    }
+                }]
+            },
+            reference: "associatedJobs-grid",
+            store: {
+                model: 'EVEInDust.model.yapeal.CorpIndustryJob',
+                remoteSort: true,
+                remoteFilter: true
+            },
+            columns: [{
+                header: "Дата окончания",
+                xtype: "datecolumn",
+                format: "Y-m-d H:i:s",
+                dataIndex: "endDate",
+                flex: 1
+            },{
+                header: "Кол-во",
+                dataIndex: "runs",
+                flex: 1,
+                renderer: function(runsCount, meta, record, rowIndex, colIndex, store, view) {
+                    var indActivityRecord = this.up('window').getViewModel().getStore('industry_activity_products').findRecord("productTypeId",record.get("productTypeId")),
+                        result = runsCount
+                        ;
 
-                if(!indActivityRecord) {
-                    setTimeout(function(){ view.refresh() }, 500);
-                } else {
-                    result = indActivityRecord.get("quantity")*runsCount;
+                    if(!indActivityRecord) {
+                        setTimeout(function(){ view.refresh() }, 500);
+                    } else {
+                        result = indActivityRecord.get("quantity")*runsCount;
+                    }
+
+                    return result;
                 }
-
-                return result;
+            },{
+                header: "Цена",
+                dataIndex: "cost",
+                flex: 1
+            }],
+            listeners: {
+                afterrender: function(grid) {
+                    EVEInDust.Common.changeUrlOfProxyInStore(grid.getStore(),"/api/yapeal/associatedcorpindustryjobs");
+                }
             }
         },{
-            header: "Цена",
-            dataIndex: "cost",
-            flex: 1
-        }],
-        listeners: {
-            afterrender: function(grid) {
-                EVEInDust.Common.changeUrlOfProxyInStore(grid.getStore(),"/api/yapeal/associatedcorpindustryjobs");
-            }
-        }
+            xtype: "grid",
+            title: "План",
+            flex: 1,
+            hidden:true,
+            reference: "plannedJobs-grid",
+            store: {
+                model: "EVEInDust.model.PlannedJob",
+                remoteFilter: true,
+                pageSize: 0
+            },
+            tbar: {
+                items: [{
+                    text: "Создать",
+                    handler: "onClickCreatePlannedJobButton"
+                },{
+                    text: "Удалить"
+                },{
+                    iconCls: "x-tbar-loading",
+                    handler: function(button){
+                        button.up("grid").getStore().load();
+                    }
+                }]
+            },
+            columns: [{
+                header: "Кол-во",
+                flex: 1,
+                dataIndex: "runs"
+            },{
+                header: "ME коэффициент",
+                flex: 1,
+                dataIndex: "facilityMeBonus",
+                xtype: "numbercolumn",
+                format: "0,000.00"
+            }]
+        }]
     },{
         xtype: "grid",
         flex: 1,

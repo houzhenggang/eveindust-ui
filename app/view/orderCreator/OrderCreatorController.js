@@ -2,7 +2,10 @@ Ext.define('EVEInDust.view.orderCreator.OrderCreatorController', {
     extend: 'Ext.app.ViewController',
     requires: [
         "EVEInDust.model.Order",
-        "EVEInDust.Common"
+        "EVEInDust.Common",
+        "EVEInDust.view.orderCreator.CreatePlannedJobForm",
+        "EVEInDust.model.yapeal.CorpBlueprint",
+        "EVEInDust.model.sde.IndustryActivityProduct"
     ],
     alias: 'controller.OrderCreator',
     onClickCreateOrderButton: function(){
@@ -65,6 +68,8 @@ Ext.define('EVEInDust.view.orderCreator.OrderCreatorController', {
                 // спрятать таблицы с работами
                 this.lookupReference("associatedJobs-grid").hide();
                 this.lookupReference("notAssociatedJobs-grid").hide();
+                this.lookupReference("plannedJobs-grid").hide();
+
                 itemsGrid.getStore().addFilter({
                     id: "order",
                     property: "order",
@@ -78,6 +83,7 @@ Ext.define('EVEInDust.view.orderCreator.OrderCreatorController', {
             this.lookupReference("items-grid").hide();
             this.lookupReference("associatedJobs-grid").hide();
             this.lookupReference("notAssociatedJobs-grid").hide();
+            this.lookupReference("plannedJobs-grid").hide();
         }
     },
     onClickCreateItem: function(){
@@ -97,17 +103,23 @@ Ext.define('EVEInDust.view.orderCreator.OrderCreatorController', {
     onItemClickInItemGrid: function(itemsGrid, item){
         var associatedJobsGrid = this.lookupReference("associatedJobs-grid"),
             notAssociatedJobsGrid = this.lookupReference("notAssociatedJobs-grid"),
+            plannedJobsGrid = this.lookupReference("plannedJobs-grid"),
             associatedJobsStoreFilters = associatedJobsGrid.getStore().getFilters(),
             isAssociatedJobsStoreNecessaryLoading = true,
             notAssociatedJobsStoreFilters = notAssociatedJobsGrid.getStore().getFilters(),
             isNotAssociatedJobsStoreNecessaryLoading = true,
+            plannedJobsStoreFilters = plannedJobsGrid.getStore().getFilters(),
+            isPlannedJobsStoreNecessaryLoading = true,
             itemIdOfLoadingAssociatedJobs
         ;
         if(associatedJobsGrid.isHidden()){
             associatedJobsGrid.show();
         }
         if(notAssociatedJobsGrid.isHidden()) {
-            notAssociatedJobsGrid.show()
+            notAssociatedJobsGrid.show();
+        }
+        if(plannedJobsGrid.isHidden()) {
+            plannedJobsGrid.show();
         }
 
         if(
@@ -124,10 +136,17 @@ Ext.define('EVEInDust.view.orderCreator.OrderCreatorController', {
             ) {
             isNotAssociatedJobsStoreNecessaryLoading = false;
         }
+        if(
+            plannedJobsStoreFilters.count() > 0 &&
+                plannedJobsStoreFilters.containsKey("item") &&
+                plannedJobsStoreFilters.get("item").getValue() === item.getId()
+            ) {
+            isPlannedJobsStoreNecessaryLoading = false;
+        }
 
 
-        if( isAssociatedJobsStoreNecessaryLoading || isNotAssociatedJobsStoreNecessaryLoading ) {
-            if((associatedJobsGrid.getStore().isLoading() || notAssociatedJobsGrid.getStore().isLoading())) {
+        if( isAssociatedJobsStoreNecessaryLoading || isNotAssociatedJobsStoreNecessaryLoading || isPlannedJobsStoreNecessaryLoading ) {
+            if(associatedJobsGrid.getStore().isLoading() || notAssociatedJobsGrid.getStore().isLoading() || plannedJobsGrid.getStore().isLoading()) {
                 itemIdOfLoadingAssociatedJobs = associatedJobsStoreFilters.get("item").getValue();
                 Ext.Msg.alert("Не торопитесь","Дождитесь загрузки данных о предмете #"+itemIdOfLoadingAssociatedJobs+" прежде чем загружать данные о #"+item.getId());
                 itemsGrid.getSelectionModel().select(itemsGrid.getStore().getById(itemIdOfLoadingAssociatedJobs))
@@ -150,6 +169,13 @@ Ext.define('EVEInDust.view.orderCreator.OrderCreatorController', {
                         value: EVEInDust.common.IndustryActivity.Manufacturing
                     }]);
                 }
+                if(isPlannedJobsStoreNecessaryLoading) {
+                    plannedJobsGrid.getStore().addFilter([{
+                        id: "item",
+                        property: "item",
+                        value: item.getId()
+                    }]);
+                }
 
                 this.getViewModel().getStore('industry_activity_products').addFilter([{
                     id: "productTypeId",
@@ -162,14 +188,13 @@ Ext.define('EVEInDust.view.orderCreator.OrderCreatorController', {
                 }]);
             }
         }
-
-
-
     },
     onSelectionChangeInItemsGrid: function(itemsGrid, selectedItems) {
         if(selectedItems.length === 0) {
             this.lookupReference("associatedJobs-grid").hide();
             this.lookupReference("notAssociatedJobs-grid").hide();
+            this.lookupReference("plannedJobs-grid").hide();
+
         }
     },
     onClickAssociateJobToProducingItemButton: function (button) {
@@ -295,5 +320,57 @@ Ext.define('EVEInDust.view.orderCreator.OrderCreatorController', {
                 });
             }
         });
+    },
+    onClickCreatePlannedJobButton: function(){
+        var win = Ext.create("EVEInDust.view.orderCreator.CreatePlannedJobForm"),
+            comboBoxInForm, storeWithBPCs, blueprintTypeId
+        ;
+
+        this.getView().add(win);
+        comboBoxInForm = this.lookupReference("createPlannedJobForm_bpccombo");
+        comboBoxInForm.disable();
+
+        blueprintTypeId = this.getViewModel().getStore('industry_activity_products').find("productTypeId",this.lookupReference("items-grid").getSelection()[0].get("typeId"));
+        storeWithBPCs = Ext.create("Ext.data.Store",{
+            model: "EVEInDust.model.yapeal.CorpBlueprint",
+            remoteFilter: true,
+            pageSize: 0,
+            filters: [{
+                id:"runs",
+                property: "runs",
+                value: "-1",
+                operator: "!="
+            },{
+                id: "typeId",
+                property: "typeId",
+                value: blueprintTypeId
+            }]
+        });
+        comboBoxInForm.setStore(storeWithBPCs);
+        comboBoxInForm.enable();
+        win.show();
+    },
+    onClickSavePlannedJob: function(){
+        var formCmp = this.lookupReference("createPlannedJobForm"),
+            form = formCmp.getForm(),
+            plannedJob
+        ;
+        if (form.isValid()) {
+            if(formCmp.getRecord()) {
+
+            } else {
+                plannedJob = Ext.create("EVEInDust.model.PlannedJob");
+                formCmp.updateRecord(plannedJob);
+                plannedJob.set("item_id",this.lookupReference("items-grid").getSelection()[0].getId());
+                plannedJob.save({
+                    callback: function(records, operaion, isSuccess){
+                        if(isSuccess)
+                            console.log("success");
+                        else
+                            console.log("failure");
+                    }
+                });
+            }
+        }
     }
 });

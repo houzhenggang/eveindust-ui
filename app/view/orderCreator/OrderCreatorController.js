@@ -110,7 +110,9 @@ Ext.define('EVEInDust.view.orderCreator.OrderCreatorController', {
             isNotAssociatedJobsStoreNecessaryLoading = true,
             plannedJobsStoreFilters = plannedJobsGrid.getStore().getFilters(),
             isPlannedJobsStoreNecessaryLoading = true,
-            itemIdOfLoadingAssociatedJobs
+            itemIdOfLoadingAssociatedJobs,
+            industryActivitiesStoreCallback,
+            industryActivityProductsStore = this.getViewModel().getStore('industry_activity_products')
         ;
         if(associatedJobsGrid.isHidden()){
             associatedJobsGrid.show();
@@ -158,17 +160,7 @@ Ext.define('EVEInDust.view.orderCreator.OrderCreatorController', {
                         value: item.getId()
                     });
                 }
-                if(isNotAssociatedJobsStoreNecessaryLoading) {
-                    notAssociatedJobsGrid.getStore().addFilter([{
-                        id: "productTypeId",
-                        property: "productTypeId",
-                        value: item.get("typeId")
-                    },{
-                        id: "activityId",
-                        property: "activityId",
-                        value: EVEInDust.common.IndustryActivity.Manufacturing
-                    }]);
-                }
+
                 if(isPlannedJobsStoreNecessaryLoading) {
                     plannedJobsGrid.getStore().addFilter([{
                         id: "item",
@@ -177,7 +169,25 @@ Ext.define('EVEInDust.view.orderCreator.OrderCreatorController', {
                     }]);
                 }
 
-                this.getViewModel().getStore('industry_activity_products').addFilter([{
+                if(isNotAssociatedJobsStoreNecessaryLoading) {
+                    notAssociatedJobsGrid.setLoading(true);
+                    industryActivitiesStoreCallback = function(store, records){
+                        notAssociatedJobsGrid.setLoading(false);
+                        industryActivityProductsStore.un("load",industryActivitiesStoreCallback);
+                        notAssociatedJobsGrid.getStore().addFilter([{
+                            id: "blueprintTypeId",
+                            property: "blueprintTypeId",
+                            value: records[0].get("typeId")
+                        },{
+                            id: "activityId",
+                            property: "activityId",
+                            value: EVEInDust.common.IndustryActivity.Manufacturing
+                        }]);
+                    };
+                    industryActivityProductsStore.on("load",industryActivitiesStoreCallback)
+                }
+
+                industryActivityProductsStore.addFilter([{
                     id: "productTypeId",
                     property: "productTypeId",
                     value: item.get("typeId")

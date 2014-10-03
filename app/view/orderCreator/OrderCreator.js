@@ -291,7 +291,13 @@ Ext.define("EVEInDust.view.orderCreator.OrderCreator",{
         store: {
             model: 'EVEInDust.model.yapeal.CorpIndustryJob',
             remoteFilter: true,
-            pageSize: 0
+            remoteSort: false,
+            pageSize: 999999,
+            sorters: [{
+                id: "endDate",
+                property: "endDate",
+                direction: "DESC"
+            }]
         },
         columns: [{
             header: "Дата окончания",
@@ -303,19 +309,19 @@ Ext.define("EVEInDust.view.orderCreator.OrderCreator",{
             header: "Кол-во",
             dataIndex: "runs",
             flex: 1,
-            renderer: function(runsCount, meta, record, rowIndex, colIndex, store, view) {
-                var indActivityRecord = this.up('window').getViewModel().getStore('industry_activity_products').findRecord("productTypeId",record.get("productTypeId")),
-                    result = runsCount
-                    ;
-
-                if(!indActivityRecord) {
-                    setTimeout(function(){ view.refresh() }, 500);
-                } else {
-                    result = indActivityRecord.get("quantity")*runsCount;
-                }
-
-                return result;
-            }
+//            renderer: function(runsCount, meta, record, rowIndex, colIndex, store, view) {
+//                var indActivityRecord = this.up('window').getViewModel().getStore('industry_activity_products').findRecord("productTypeId",record.get("productTypeId")),
+//                    result = runsCount
+//                    ;
+//
+//                if(!indActivityRecord) {
+//                    setTimeout(function(){ view.refresh() }, 500);
+//                } else {
+//                    result = indActivityRecord.get("quantity")*runsCount;
+//                }
+//
+//                return result;
+//            }
         },{
             header: "Цена",
             dataIndex: "cost",

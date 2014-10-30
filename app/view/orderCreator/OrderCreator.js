@@ -159,11 +159,17 @@ Ext.define("EVEInDust.view.orderCreator.OrderCreator",{
                 flex: 1/2,
                 editor: {
                     allowBlank: false
-                }
+                },
+                xtype: "numbercolumn",
+                format: "0,000",
+                align: "right"
             },{
                 header: "В произв-ве",
                 dataIndex: "realCount",
-                flex: 1/2
+                flex: 1/2,
+                xtype: "numbercolumn",
+                format: "0,000",
+                align: "right"
             }],
             listeners: {
                 itemclick: "onItemClickInItemGrid",
@@ -208,6 +214,9 @@ Ext.define("EVEInDust.view.orderCreator.OrderCreator",{
             },{
                 header: "Кол-во",
                 dataIndex: "runs",
+                xtype: "numbercolumn",
+                format: "0,000",
+                align: "right",
                 flex: 1,
                 renderer: function(runsCount, meta, record, rowIndex, colIndex, store, view) {
                     var indActivityRecord = this.up('window').getViewModel().getStore('industry_activity_products').findRecord("productTypeId",record.get("productTypeId")),
@@ -220,12 +229,15 @@ Ext.define("EVEInDust.view.orderCreator.OrderCreator",{
                         result = indActivityRecord.get("quantity")*runsCount;
                     }
 
-                    return result;
+                    return Ext.util.Format.number(result,'0,000');
                 }
             },{
                 header: "Цена",
                 dataIndex: "cost",
-                flex: 1
+                flex: 1,
+                xtype: "numbercolumn",
+                format: "0,000",
+                align: "right"
             }],
             listeners: {
                 afterrender: function(grid) {
@@ -259,13 +271,17 @@ Ext.define("EVEInDust.view.orderCreator.OrderCreator",{
             columns: [{
                 header: "Кол-во",
                 flex: 1,
-                dataIndex: "runs"
+                dataIndex: "runs",
+                xtype: "numbercolumn",
+                format: "0,000",
+                align: "right"
             },{
                 header: "ME коэффициент",
                 flex: 1,
                 dataIndex: "facilityMeBonus",
                 xtype: "numbercolumn",
-                format: "0,000.00"
+                format: "0,000",
+                align: "right"
             }]
         }]
     },{
@@ -308,6 +324,9 @@ Ext.define("EVEInDust.view.orderCreator.OrderCreator",{
         },{
             header: "Кол-во",
             dataIndex: "runs",
+            xtype: "numbercolumn",
+            format: "0,000",
+            align: "right",
             flex: 1,
 //            renderer: function(runsCount, meta, record, rowIndex, colIndex, store, view) {
 //                var indActivityRecord = this.up('window').getViewModel().getStore('industry_activity_products').findRecord("productTypeId",record.get("productTypeId")),
@@ -325,6 +344,9 @@ Ext.define("EVEInDust.view.orderCreator.OrderCreator",{
         },{
             header: "Цена",
             dataIndex: "cost",
+            xtype: "numbercolumn",
+            format: "0,000",
+            align: "right",
             flex: 1
         }],
         listeners: {

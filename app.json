@@ -3,6 +3,7 @@
      * The application's namespace.
      */
     "name": "EVEInDust",
+    "locale": "ru",
 
     /**
      * The relative path to the appliaction's markup file (html, jsp, asp, etc.)
@@ -40,6 +41,7 @@
      *      ]
      */
     "requires": [
+        "ext-locale"
     ],
 
     /**

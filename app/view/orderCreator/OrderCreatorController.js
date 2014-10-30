@@ -126,6 +126,10 @@ Ext.define('EVEInDust.view.orderCreator.OrderCreatorController', {
             industryActivitiesStoreCallback,
             industryActivityProductsStore = this.getViewModel().getStore('industry_activity_products')
         ;
+        if(item.phantom) {
+            Ext.Msg.alert("Не торопитесь","Простите, но данная запись ещё не занесена в база, надо немного подождать, чтобы начать с ней работать");
+            return;
+        }
         if(associatedJobsGrid.isHidden()){
             associatedJobsGrid.show();
         }

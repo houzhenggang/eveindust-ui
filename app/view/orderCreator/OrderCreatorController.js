@@ -17,10 +17,16 @@ Ext.define('EVEInDust.view.orderCreator.OrderCreatorController', {
         ordersGrid.getStore().insert(0, [order]);
         ordersGrid.findPlugin("rowediting").startEdit(order,0);
     },
-    onClickCloseOrderButton: function(button){
+    onClickCloseOrderButton: function(){
         var ordersGrid = this.lookupReference('orders-grid'),
             order = ordersGrid.getSelection()[0]
             ;
+
+        this.lookupReference("items-grid").hide();
+        this.lookupReference("associatedJobs-grid").hide();
+        this.lookupReference("notAssociatedJobs-grid").hide();
+        this.lookupReference("plannedJobs-grid").hide();
+
         ordersGrid.setLoading(true);
         order.setStatus(Ext.getStore("OrderStatuses").getById(EVEInDust.common.OrderStatuses.WaitingForProduce));
         order.save({

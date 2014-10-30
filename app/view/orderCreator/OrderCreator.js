@@ -76,7 +76,14 @@ Ext.define("EVEInDust.view.orderCreator.OrderCreator",{
             columns: [{
                 header: "#",
                 flex: 25/100,
-                dataIndex: "id"
+                dataIndex: "id",
+                renderer: function (value, meta, record) {
+                    if(record.phantom) {
+                        return "";
+                    } else {
+                        return value;
+                    }
+                }
             },{
                 header: "Торговый хаб",
                 flex: 1,

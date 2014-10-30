@@ -84,6 +84,12 @@ Ext.define('EVEInDust.view.orderCreator.OrderCreatorController', {
             this.lookupReference("associatedJobs-grid").hide();
             this.lookupReference("notAssociatedJobs-grid").hide();
             this.lookupReference("plannedJobs-grid").hide();
+
+            this.lookupReference('orders-grid').down('button[action="remove"]').disable();
+            this.lookupReference('orders-grid').down('button[action="close"]').disable();
+        } else {
+            this.lookupReference('orders-grid').down('button[action="remove"]').enable();
+            this.lookupReference('orders-grid').down('button[action="close"]').enable();
         }
     },
     onClickCreateItem: function(){
@@ -205,6 +211,9 @@ Ext.define('EVEInDust.view.orderCreator.OrderCreatorController', {
             this.lookupReference("notAssociatedJobs-grid").hide();
             this.lookupReference("plannedJobs-grid").hide();
 
+            this.lookupReference("items-grid").down('button[action="remove"]').disable();
+        } else {
+            this.lookupReference("items-grid").down('button[action="remove"]').enable();
         }
     },
     onClickAssociateJobToProducingItemButton: function (button) {
@@ -381,6 +390,20 @@ Ext.define('EVEInDust.view.orderCreator.OrderCreatorController', {
                     }
                 });
             }
+        }
+    },
+    onSelectionChangeInAssociatedJobsGrid: function(associatedJobsGrid, selectedItems) {
+        if(selectedItems.length === 0) {
+            this.lookupReference("associatedJobs-grid").down('button[action="unlink"]').disable();
+        } else {
+            this.lookupReference("associatedJobs-grid").down('button[action="unlink"]').enable();
+        }
+    },
+    onSelectionChangeInNotAssociatedJobsGrid: function(associatedJobsGrid, selectedItems) {
+        if(selectedItems.length === 0) {
+            this.lookupReference("notAssociatedJobs-grid").down('button[action="link"]').disable();
+        } else {
+            this.lookupReference("notAssociatedJobs-grid").down('button[action="link"]').enable();
         }
     }
 });

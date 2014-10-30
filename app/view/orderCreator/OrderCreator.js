@@ -55,13 +55,18 @@ Ext.define("EVEInDust.view.orderCreator.OrderCreator",{
             tbar: {
                 items: [{
                     text: "Создать",
-                    handler: "onClickCreateOrderButton"
+                    handler: "onClickCreateOrderButton",
+                    action: 'create'
                 },{
                     text: "Удалить",
-                    handler: "onClickDeleteOrderButton"
+                    handler: "onClickDeleteOrderButton",
+                    action: 'remove',
+                    disabled: true
                 },{
                     text: "Закрыть",
-                    handler: "onClickCloseOrderButton"
+                    handler: "onClickCloseOrderButton",
+                    action: 'close',
+                    disabled: true
                 }]
             },
             listeners: {
@@ -120,10 +125,13 @@ Ext.define("EVEInDust.view.orderCreator.OrderCreator",{
             tbar: {
                 items:[{
                     text: "Создать",
-                    handler: "onClickCreateItem"
+                    handler: "onClickCreateItem",
+                    action: "create"
                 },{
                     text: "Удалить",
-                    handler: "onClickDeleteItemItem"
+                    handler: "onClickDeleteItemItem",
+                    action: "remove",
+                    disabled: true
                 },{
                     iconCls: "x-tbar-loading",
                     handler: function(button){
@@ -191,7 +199,9 @@ Ext.define("EVEInDust.view.orderCreator.OrderCreator",{
             tbar: {
                 items:[{
                     text: "Отвязать",
-                    handler: "onClickDisassociateJobFromProducingItemButton"
+                    handler: "onClickDisassociateJobFromProducingItemButton",
+                    action: "unlink",
+                    disabled: true
                 },{
                     iconCls: "x-tbar-loading",
                     handler: function(button){
@@ -242,7 +252,8 @@ Ext.define("EVEInDust.view.orderCreator.OrderCreator",{
             listeners: {
                 afterrender: function(grid) {
                     EVEInDust.Common.changeUrlOfProxyInStore(grid.getStore(),"/api/yapeal/associatedcorpindustryjobs");
-                }
+                },
+                selectionchange: "onSelectionChangeInAssociatedJobsGrid"
             }
         },{
             xtype: "grid",
@@ -258,9 +269,11 @@ Ext.define("EVEInDust.view.orderCreator.OrderCreator",{
             tbar: {
                 items: [{
                     text: "Создать",
-                    handler: "onClickCreatePlannedJobButton"
+                    handler: "onClickCreatePlannedJobButton",
+                    action: "create"
                 },{
-                    text: "Удалить"
+                    text: "Удалить",
+                    action: "remove"
                 },{
                     iconCls: "x-tbar-loading",
                     handler: function(button){
@@ -293,7 +306,9 @@ Ext.define("EVEInDust.view.orderCreator.OrderCreator",{
         tbar: {
             items:[{
                 text: "Привязать",
-                handler: "onClickAssociateJobToProducingItemButton"
+                handler: "onClickAssociateJobToProducingItemButton",
+                action: "link",
+                disabled: true
             },{
                 iconCls: "x-tbar-loading",
                 handler: function(button){
@@ -352,7 +367,8 @@ Ext.define("EVEInDust.view.orderCreator.OrderCreator",{
         listeners: {
             afterrender: function(grid) {
                 EVEInDust.Common.changeUrlOfProxyInStore(grid.getStore(),"/api/yapeal/notassociatedcorpindustryjobs");
-            }
+            },
+            selectionchange: "onSelectionChangeInNotAssociatedJobsGrid"
         }
     }]
 });

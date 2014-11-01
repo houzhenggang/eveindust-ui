@@ -18,6 +18,10 @@ Ext.define("EVEInDust.model.Item", {
             type: "int"
         },
         {
+            name: "manualMarkSold",
+            type: "int"
+        },
+        {
             name: "id",
             type: "int",
             useNull: true,
@@ -41,6 +45,10 @@ Ext.define("EVEInDust.model.Item", {
         {
             type: "presence",
             field: "realCount"
+        },
+        {
+            type: "presence",
+            field: "manualMarkSold"
         },
         {
             type: "presence",

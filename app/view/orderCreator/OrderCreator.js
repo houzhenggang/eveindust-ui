@@ -235,7 +235,7 @@ Ext.define("EVEInDust.view.orderCreator.OrderCreator",{
                 format: "0,000",
                 align: "right",
                 flex: 1,
-                renderer: function(runsCount, meta, record, rowIndex, colIndex, store, view) {
+                /*renderer: function(runsCount, meta, record, rowIndex, colIndex, store, view) {
                     var indActivityRecord = this.up('window').getViewModel().getStore('industry_activity_products').findRecord("productTypeId",record.get("productTypeId")),
                         result = runsCount
                         ;
@@ -247,7 +247,7 @@ Ext.define("EVEInDust.view.orderCreator.OrderCreator",{
                     }
 
                     return Ext.util.Format.number(result,'0,000');
-                }
+                }*/
             },{
                 header: "Цена",
                 dataIndex: "cost",

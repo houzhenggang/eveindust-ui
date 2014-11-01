@@ -101,13 +101,25 @@ Ext.define("EVEInDust.view.salesMonitoring.SalesMonitoring",{
         }
     },{
         xtype: "grid",
-        reference: "itemsToProduce-grid",
+        reference: "items-grid",
         title: "Продаваемые товары",
         flex: 1,
         store:{
             model: "EVEInDust.model.Item",
             pageSize: 0,
             remoteFilter: true
+        },
+        listeners: {
+            selectionchange: "onSelectionChangeInItemsGrid"
+        },
+        tbar: {
+            items: [{
+                text: "Пометить как проданный",
+                handler: "onClickMarkItemAsSoldItem",
+                tooltip: "Помечает выбранный товар как проданный. Будьте внимательны, это является крайней мерой на случай непредвиденных ошибок",
+                disabled: true,
+                action: "markAsSold"
+            }]
         },
         bbar: {
             items: [{
@@ -121,7 +133,7 @@ Ext.define("EVEInDust.view.salesMonitoring.SalesMonitoring",{
             stripeRows: false,
             getRowClass: function(item) {
                 var percent;
-                if(+item.get("remainsQuantity") === 0) {
+                if(+item.get("remainsQuantity") <= 0) {
                     percent = (item.get("income")/item.get("overallExpenses")-1)*100;
                     if(percent < 0)
                         return "red";
@@ -186,7 +198,7 @@ Ext.define("EVEInDust.view.salesMonitoring.SalesMonitoring",{
             header: "Прибыль",
             xtype: "numbercolumn",
             renderer: function(emptyValue, meta, item){
-                if(+item.get("remainsQuantity") === 0) {
+                if(+item.get("remainsQuantity") <= 0) {
                     return Ext.util.Format.number(item.get("income")-item.get("overallExpenses"),"0,000.00");
                 } else {
                     return "";
@@ -198,7 +210,7 @@ Ext.define("EVEInDust.view.salesMonitoring.SalesMonitoring",{
             header: "Прибыль в %",
             xtype: "numbercolumn",
             renderer: function(emptyValue, meta, item){
-                if(+item.get("remainsQuantity") === 0) {
+                if(+item.get("remainsQuantity") <= 0) {
                     return Ext.util.Format.number((item.get("income")/item.get("overallExpenses")-1)*100,"0.00")+"%"
                 } else {
                     return "";

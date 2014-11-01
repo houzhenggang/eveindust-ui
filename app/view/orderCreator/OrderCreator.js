@@ -307,10 +307,19 @@ Ext.define("EVEInDust.view.orderCreator.OrderCreator",{
                 action: "link",
                 disabled: true
             },{
+                text: "Игнорировать",
+                handler: "onClickIgnoreJobButton",
+                action: "ignore",
+                disabled: true
+            },{
                 iconCls: "x-tbar-loading",
                 handler: function(button){
                     button.up("grid").getStore().load();
                 }
+            },{
+                text: "Список игнорируемых",
+                handler: function(){},
+                action: "seeIgnoredList"
             }]
         },
         selModel: {

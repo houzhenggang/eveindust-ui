@@ -426,18 +426,51 @@ Ext.define('EVEInDust.view.orderCreator.OrderCreatorController', {
             }
         }
     },
-    onSelectionChangeInAssociatedJobsGrid: function(associatedJobsGrid, selectedItems) {
-        if(selectedItems.length === 0) {
-            this.lookupReference("associatedJobs-grid").down('button[action="unlink"]').disable();
+    onClickIgnoreJobButton: function(button) {
+        var grid = this.lookupReference('notAssociatedJobs-grid'),
+            selectedRecords = grid.getSelection(),
+            job, ignoredJob
+        ;
+        if(selectedRecords.length > 0) {
+            button.disable();
+            job = selectedRecords[0];
+            ignoredJob = Ext.create("EVEInDust.model.IgnoredJob",{
+                jobId: job.get("jobId")
+            });
+            grid.setLoading(true);
+            ignoredJob.save({
+                success: function(){
+
+                },
+                failure: function(){
+                    Ext.Msg.alert("Ошибка","Не удалось добавить работу в список игнорируемых");
+                },
+                callback: function(){
+                    grid.setLoading(false);
+                    button.enable();
+                    grid.getStore().load();
+                }
+            })
         } else {
-            this.lookupReference("associatedJobs-grid").down('button[action="unlink"]').enable();
+            Ext.Msg.alert("Ошибка", "Не выбрана запись для обработки");
+        }
+    },
+    onSelectionChangeInAssociatedJobsGrid: function(associatedJobsGrid, selectedItems) {
+        var grid = this.lookupReference("associatedJobs-grid");
+        if(selectedItems.length === 0) {
+            grid.down('button[action="unlink"]').disable();
+        } else {
+            grid.down('button[action="unlink"]').enable();
         }
     },
     onSelectionChangeInNotAssociatedJobsGrid: function(associatedJobsGrid, selectedItems) {
+        var grid = this.lookupReference("notAssociatedJobs-grid");
         if(selectedItems.length === 0) {
-            this.lookupReference("notAssociatedJobs-grid").down('button[action="link"]').disable();
+            grid.down('button[action="link"]').disable();
+            grid.down('button[action="ignore"]').disable();
         } else {
-            this.lookupReference("notAssociatedJobs-grid").down('button[action="link"]').enable();
+            grid.down('button[action="link"]').enable();
+            grid.down('button[action="ignore"]').enable();
         }
     }
 });

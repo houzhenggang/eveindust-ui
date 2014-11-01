@@ -111,7 +111,31 @@ Ext.define('EVEInDust.view.orderCreator.OrderCreatorController', {
         EVEInDust.Common.deleteSelectedItemInGrid(this.lookupReference("items-grid"),"Удаление товара для производства не удалось");
     },
     onCancelEditItemRow: EVEInDust.Common.onCancelEditModelRow,
-    onEditItemRowComplete: EVEInDust.Common.onEditModelRowComplete(),
+    onEditItemRowComplete: function(editor, context){
+        var clickOnItemAfterSave = false,
+            itemsGrid = this.lookupReference("items-grid"),
+            record = context.record
+        ;
+        if(record.phantom) {
+            clickOnItemAfterSave = true;
+        }
+        record.save({
+            success: function(){
+                record.commit();
+                if(clickOnItemAfterSave) {
+                    itemsGrid.fireEvent("itemclick",itemsGrid,record);
+                }
+            },
+            failure: function(){
+                Ext.Msg.show({
+                    title: "Ошибка",
+                    msg: "Сохранение записи не удалось",
+                    icon: Ext.Msg.ERROR,
+                    buttons: Ext.Msg.OK
+                });
+            }
+        });
+    },
     onItemClickInItemGrid: function(itemsGrid, item){
         var associatedJobsGrid = this.lookupReference("associatedJobs-grid"),
             notAssociatedJobsGrid = this.lookupReference("notAssociatedJobs-grid"),

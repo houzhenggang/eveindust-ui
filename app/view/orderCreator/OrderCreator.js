@@ -169,16 +169,6 @@ Ext.define("EVEInDust.view.orderCreator.OrderCreator",{
                     hideTrigger: true
                 }
             },{
-                header: "План",
-                dataIndex: "count",
-                flex: 1/2,
-                editor: {
-                    allowBlank: false
-                },
-                xtype: "numbercolumn",
-                format: "0,000",
-                align: "right"
-            },{
                 header: "В произв-ве",
                 dataIndex: "realCount",
                 flex: 1/2,

@@ -45,12 +45,12 @@ Ext.define("EVEInDust.view.salesMonitoring.SalesMonitoring",{
             remoteFilter: true,
             autoLoad: true,
             filters: [{
-                id: "status1",
+                id: "status_forming",
                 property: "status",
                 value: EVEInDust.common.OrderStatuses.Forming,
                 operator: "!="
             },{
-                id: "status2",
+                id: "status_sold",
                 property: "status",
                 value: EVEInDust.common.OrderStatuses.Sold,
                 operator: "!="

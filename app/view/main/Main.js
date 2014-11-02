@@ -1,6 +1,6 @@
 /**
  * This class is the main view for the application. It is specified in app.js as the
- * "autoCreateViewport" property. That setting automatically applies the "viewport"
+ * 'autoCreateViewport' property. That setting automatically applies the 'viewport'
  * plugin to promote that instance of this class to the body element.
  *
  * TODO - Replace this content of this view to suite the needs of your application.
@@ -23,23 +23,38 @@ Ext.define('EVEInDust.view.main.Main', {
     items: [{
         tbar:{
             items: [{
-                text: 'Создание Заказов',
-                handler: "onClickCreateOrdersButton"
+                text: 'Производство и реализация',
+                menu: {
+                    items: [{
+                        text: 'Формирование заказов',
+                        handler: 'onClickCreateOrdersButton'
+                    },{
+                        text: 'Мониторинг реализации',
+                        handler: 'onClickSalesMonitoringButton'
+                    },{
+                        text: 'История',
+                        menu: {
+                            items: [{
+                                text: 'По заказам',
+                                handler: 'onClickSalesHistoryButton'
+                            },{
+                                text: 'По товарам'
+                            }]
+                        }
+                    }]
+                }
             },{
-                text: "Редактор Торговых Хабов",
-                handler: "onClickTradeHubEditorButton"
+                text: 'Редактор Торговых Хабов',
+                handler: 'onClickTradeHubEditorButton'
             },{
-                text: "Мониторинг реализации заказов",
-                handler: "onClickSalesMonitoringButton"
+                text: 'Прибыльность BPO',
+                handler: 'onClickProfitOfBPOButton'
             },{
-                text: "Прибыльность BPO",
-                handler: "onClickProfitOfBPOButton"
+                text: 'Мониторинг персонажей',
+                handler: 'onClickCharactersMonitorButton'
             },{
-                text: "Мониторинг персонажей",
-                handler: "onClickCharactersMonitorButton"
-            },{
-                text: "Обзор BPC",
-                handler: "onClickOverviewBPCRuns"
+                text: 'Обзор BPC',
+                handler: 'onClickOverviewBPCRuns'
             }]
         }
     }]

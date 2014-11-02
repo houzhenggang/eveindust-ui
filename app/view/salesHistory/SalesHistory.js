@@ -1,17 +1,17 @@
-Ext.define("EVEInDust.view.salesMonitoring.SalesMonitoring", {
+Ext.define("EVEInDust.view.salesHistory.SalesHistory", {
     extend: "Ext.window.Window",
-    xtype: "SalesMonitoring",
-    controller: "SalesMonitoring",
+    xtype: "SalesHistory",
+    controller: "SalesHistory",
     viewModel: {
-        type: "SalesMonitoring"
+        type: "SalesHistory"
     },
     requires: [
         "EVEInDust.model.Order",
         "EVEInDust.common.OrderStatuses",
-        "EVEInDust.view.salesMonitoring.SalesMonitoringController",
-        "EVEInDust.view.salesMonitoring.SalesMonitoringModel"
+        "EVEInDust.view.salesHistory.SalesHistoryController",
+        "EVEInDust.view.salesHistory.SalesHistoryModel"
     ],
-    title: "Мониторинг реализации заказов",
+    title: "История реализации заказов",
     width: 1050,
     height: 650,
     closable: true,
@@ -24,13 +24,6 @@ Ext.define("EVEInDust.view.salesMonitoring.SalesMonitoring", {
         flex: 1,
         reference: "orders-grid",
         title: "Заказы",
-        plugins: [{
-            ptype: 'rowediting',
-            clicksToEdit: 2,
-            listeners: {
-                edit: 'onEditOrderRowComplete'
-            }
-        }],
         bbar: {
             items: [{
                 iconCls: "x-tbar-loading",
@@ -39,21 +32,26 @@ Ext.define("EVEInDust.view.salesMonitoring.SalesMonitoring", {
                 }
             }]
         },
+        viewConfig: {
+            stripeRows: false,
+            getRowClass: function (order) {
+                var percent;
+                percent = (order.get("totalIncome") / order.get("overallExpenses") - 1) * 100;
+                if (percent < 0)
+                    return "red";
+                else
+                    return "little-green";
+            }
+        },
         store: {
             model: "EVEInDust.model.Order",
             pageSize: 0,
             remoteFilter: true,
             autoLoad: true,
             filters: [{
-                id: "status_forming",
-                property: "status",
-                value: EVEInDust.common.OrderStatuses.Forming,
-                operator: "!="
-            }, {
                 id: "status_sold",
                 property: "status",
-                value: EVEInDust.common.OrderStatuses.Sold,
-                operator: "!="
+                value: EVEInDust.common.OrderStatuses.Sold
             }]
         },
         columns: [{
@@ -78,23 +76,47 @@ Ext.define("EVEInDust.view.salesMonitoring.SalesMonitoring", {
             dataIndex: "readyDate",
             xtype: "datecolumn",
             format: "Y-m-d H:i:s",
-            editor: {
-                xtype: "datefield",
-                format: "Y-m-d H:i:s",
-                allowBlank: true
-            },
             flex: 2
         }, {
             header: "Дата нач. реализ.",
             dataIndex: "startSellingDate",
             xtype: "datecolumn",
             format: "Y-m-d H:i:s",
-            editor: {
-                xtype: "datefield",
-                format: "Y-m-d H:i:s",
-                allowBlank: true
-            },
             flex: 2
+        }, {
+            header: "Дата оконч. реализ.",
+            dataIndex: "endSellingDate",
+            xtype: "datecolumn",
+            format: "Y-m-d H:i:s",
+            flex: 2
+        }, {
+            header: "Общ. затраты",
+            xtype: "numbercolumn",
+            dataIndex: "overallExpenses",
+            format: "0,000.00",
+            align: "right",
+            flex: 3 / 2
+        }, {
+            header: "Доход (ISK)",
+            xtype: "numbercolumn",
+            dataIndex: "totalIncome",
+            format: "0,000.00",
+            align: "right",
+            flex: 3 / 2
+        }, {
+            header: "Прибыль",
+            dataIndex: "totalProfit",
+            xtype: "numbercolumn",
+            format: "0,000.00",
+            align: "right",
+            flex: 3 / 2
+        }, {
+            header: "Прибыль в %",
+            xtype: "numbercolumn",
+            renderer: function (emptyValue, meta, order) {
+                return Ext.util.Format.number((order.get("totalIncome") / order.get("overallExpenses") - 1) * 100, "0.00") + "%"
+            },
+            align: "right"
         }],
         listeners: {
             itemclick: "onItemClickInOrderGrid"
@@ -111,15 +133,6 @@ Ext.define("EVEInDust.view.salesMonitoring.SalesMonitoring", {
         },
         listeners: {
             selectionchange: "onSelectionChangeInItemsGrid"
-        },
-        tbar: {
-            items: [{
-                text: "Пометить как проданный",
-                handler: "onClickMarkItemAsSoldItem",
-                tooltip: "Помечает выбранный товар как проданный. Будьте внимательны, это является крайней мерой на случай непредвиденных ошибок",
-                disabled: true,
-                action: "markAsSold"
-            }]
         },
         bbar: {
             items: [{
@@ -156,12 +169,6 @@ Ext.define("EVEInDust.view.salesMonitoring.SalesMonitoring", {
                     return typeId;
                 }
             }
-        }, {
-            xtype: "numbercolumn",
-            header: "Остаток (шт)",
-            dataIndex: "remainsQuantity",
-            format: "0,000",
-            align: "right"
         }, {
             xtype: "numbercolumn",
             header: "Продано (шт)",
@@ -216,9 +223,14 @@ Ext.define("EVEInDust.view.salesMonitoring.SalesMonitoring", {
                     return "";
                 }
             },
-            align: "right"
+            align: "right",
+            flex: 1
+        }, {
+            header: "Дата последней продажи",
+            dataIndex: "lastTransactionDatetime",
+            xtype: "datecolumn",
+            format: "Y-m-d H:i:s",
+            flex: 1
         }]
     }]
-
-
 });

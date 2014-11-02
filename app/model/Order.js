@@ -36,6 +36,14 @@ Ext.define("EVEInDust.model.Order", {
             type: "date",
             dateFormat: "Y-m-d\\TH:i:sO",
             useNull: true
+        },
+        {
+            name: "totalProfit",
+            type: "number",
+            calculate: function(order) {
+                console.log(arguments);
+                return +order["totalIncome"]-(+order["overallExpenses"]);
+            }
         }
     ],
     validations: [

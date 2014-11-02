@@ -26,11 +26,18 @@ Ext.define("EVEInDust.model.Item", {
         {
             name: "order_id",
             type: "int"
-        },{
+        }, {
             name: "lastTransactionDatetime",
             type: "date",
             dateFormat: "Y-m-d\\TH:i:sO",
             useNull: true
+        }, {
+            // Сделал данное поле, чтобы не городить постоянно эти проверки. Необходимо обратить внимание, что
+            // данные поля (remainsQuantity) генерируются в самом контроллере ItemController.
+            name: "isSoldOut",
+            calculate: function (rawdata) {
+                return rawdata["remainsQuantity"] <= 0 || +rawdata["manualMarkSold"] === 1;
+            }
         }
     ],
     validations: [
@@ -63,5 +70,11 @@ Ext.define("EVEInDust.model.Item", {
             setterName: 'setOrder'
         }
     ],
-    proxy: {"type": "rest", "url": "/api/itemtoproduces", "actionMethods": {"update": "PATCH", "read": "GET", "create": "POST", "destroy": "DELETE"}, "reader": {"rootProperty": "data", "type": "json", "messageProperty": "message"}, "writer": {"type": "json", "writeRecordId": false, "writeAllFields": false, "dateFormat": "Y-m-d\\TH:i:sO"}}
+    proxy: {
+        "type": "rest",
+        "url": "/api/itemtoproduces",
+        "actionMethods": {"update": "PATCH", "read": "GET", "create": "POST", "destroy": "DELETE"},
+        "reader": {"rootProperty": "data", "type": "json", "messageProperty": "message"},
+        "writer": {"type": "json", "writeRecordId": false, "writeAllFields": false, "dateFormat": "Y-m-d\\TH:i:sO"}
+    }
 });

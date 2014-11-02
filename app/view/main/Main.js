@@ -38,7 +38,8 @@ Ext.define('EVEInDust.view.main.Main', {
                                 text: 'По заказам',
                                 handler: 'onClickSalesHistoryButton'
                             },{
-                                text: 'По товарам'
+                                text: 'По товарам',
+                                handler: 'onClickItemsSalesHistoryButton'
                             }]
                         }
                     }]

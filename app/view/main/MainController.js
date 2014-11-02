@@ -9,7 +9,8 @@ Ext.define('EVEInDust.view.main.MainController', {
         "EVEInDust.view.profitOfBPO.ProfitOfBPO",
         "EVEInDust.view.charactersMonitor.CharactersMonitor",
         "EVEInDust.view.overviewBPCRuns.OverviewBPCRuns",
-        "EVEInDust.view.salesHistory.SalesHistory"
+        "EVEInDust.view.salesHistory.SalesHistory",
+        "EVEInDust.view.salesItemsHistory.SalesItemsHistory"
     ],
 
     alias: 'controller.main',
@@ -34,5 +35,8 @@ Ext.define('EVEInDust.view.main.MainController', {
     },
     onClickSalesHistoryButton: function(){
         Ext.widget("SalesHistory").show();
+    },
+    onClickItemsSalesHistoryButton: function(){
+        Ext.widget("SalesItemsHistory").show();
     }
 }, null);

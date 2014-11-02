@@ -92,7 +92,5 @@ Ext.define('EVEInDust.view.salesItemsHistory.SalesItemsHistoryController', {
                 itemsGrid.setLoading(false);
             }
         });
-
-        console.log()
     }
 });

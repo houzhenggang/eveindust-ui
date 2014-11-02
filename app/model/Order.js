@@ -41,7 +41,6 @@ Ext.define("EVEInDust.model.Order", {
             name: "totalProfit",
             type: "number",
             calculate: function(order) {
-                console.log(arguments);
                 return +order["totalIncome"]-(+order["overallExpenses"]);
             }
         }

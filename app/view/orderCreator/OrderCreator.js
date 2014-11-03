@@ -56,17 +56,20 @@ Ext.define("EVEInDust.view.orderCreator.OrderCreator",{
                 items: [{
                     text: "Создать",
                     handler: "onClickCreateOrderButton",
-                    action: 'create'
+                    action: 'create',
+                    tooltip: "Создание нового заказа"
                 },{
                     text: "Удалить",
                     handler: "onClickDeleteOrderButton",
                     action: 'remove',
-                    disabled: true
+                    disabled: true,
+                    tooltip: "Удаление выбранного заказа"
                 },{
                     text: "Закрыть",
                     handler: "onClickCloseOrderButton",
                     action: 'close',
-                    disabled: true
+                    disabled: true,
+                    tooltip: "Закрытие выбранного заказа для редактирования. После закрытия, все работы (industry job) должны быть завершены и произведенные товары должны поступить на реализацию"
                 }]
             },
             listeners: {
@@ -112,7 +115,7 @@ Ext.define("EVEInDust.view.orderCreator.OrderCreator",{
             }]
         },{
             xtype: "grid",
-            title: "Предметы для произв-ва",
+            title: "Товары",
             flex: 2,
             hidden: true,
             reference: "items-grid",
@@ -133,17 +136,20 @@ Ext.define("EVEInDust.view.orderCreator.OrderCreator",{
                 items:[{
                     text: "Создать",
                     handler: "onClickCreateItem",
-                    action: "create"
+                    action: "create",
+                    tooltip: 'Создание нового товара'
                 },{
                     text: "Удалить",
                     handler: "onClickDeleteItem",
                     action: "remove",
-                    disabled: true
+                    disabled: true,
+                    tooltip: 'Удаление выбранного товара'
                 },{
                     iconCls: "x-tbar-loading",
                     handler: function(button){
                         button.up("grid").getStore().load();
-                    }
+                    },
+                    tooltip: 'Обновление данных по товарам'
                 }]
             },
             columns: [{
@@ -207,12 +213,14 @@ Ext.define("EVEInDust.view.orderCreator.OrderCreator",{
                     text: "Отвязать",
                     handler: "onClickDisassociateJobFromProducingItemButton",
                     action: "unlink",
-                    disabled: true
+                    disabled: true,
+                    tooltip: 'Удаляет связь между выбранной работой и производимым товаром'
                 },{
                     iconCls: "x-tbar-loading",
                     handler: function(button){
                         button.up("grid").getStore().load();
-                    }
+                    },
+                    tooltip: "Обновление данных о связях между работами и производимыми товарами"
                 }]
             },
             reference: "associatedJobs-grid",
@@ -323,21 +331,25 @@ Ext.define("EVEInDust.view.orderCreator.OrderCreator",{
                 text: "Привязать",
                 handler: "onClickAssociateJobToProducingItemButton",
                 action: "link",
-                disabled: true
+                disabled: true,
+                tooltip: "Создает связь между выбранной работой и производимым товаром"
             },{
                 text: "Игнорировать",
                 handler: "onClickIgnoreJobButton",
                 action: "ignore",
-                disabled: true
+                disabled: true,
+                tooltip: "Добавляет выбранную работу в игнор. Этим следует воспользоваться, когда есть работа, которая не участвует в данной системе"
             },{
                 iconCls: "x-tbar-loading",
                 handler: function(button){
                     button.up("grid").getStore().load();
-                }
+                },
+                tooltip: "Обновление данных о непривязанных работах"
             },{
                 text: "Список игнорируемых",
                 handler: function(){},
-                action: "seeIgnoredList"
+                action: "seeIgnoredList",
+                tooltip: "Происмотреть список игнорируемых работ, относительно производимого товара"
             }]
         },
         selModel: {

@@ -541,6 +541,5 @@ Ext.define('EVEInDust.view.orderCreator.OrderCreatorController', {
         } else {
             callback();
         }
-
-    },
+    }
 });

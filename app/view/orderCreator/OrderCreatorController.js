@@ -426,35 +426,35 @@ Ext.define('EVEInDust.view.orderCreator.OrderCreatorController', {
             }
         }
     },
-    onClickIgnoreJobButton: function(button) {
-        var grid = this.lookupReference('notAssociatedJobs-grid'),
-            selectedRecords = grid.getSelection(),
-            job, ignoredJob
-        ;
-        if(selectedRecords.length > 0) {
-            button.disable();
-            job = selectedRecords[0];
-            ignoredJob = Ext.create("EVEInDust.model.IgnoredJob",{
-                jobId: job.get("jobId")
-            });
-            grid.setLoading(true);
-            ignoredJob.save({
-                success: function(){
-
-                },
-                failure: function(){
-                    Ext.Msg.alert("Ошибка","Не удалось добавить работу в список игнорируемых");
-                },
-                callback: function(){
-                    grid.setLoading(false);
-                    button.enable();
-                    grid.getStore().load();
-                }
-            })
-        } else {
-            Ext.Msg.alert("Ошибка", "Не выбрана запись для обработки");
-        }
-    },
+    //onClickIgnoreJobButton: function(button) {
+    //    var grid = this.lookupReference('notAssociatedJobs-grid'),
+    //        selectedRecords = grid.getSelection(),
+    //        job, ignoredJob
+    //    ;
+    //    if(selectedRecords.length > 0) {
+    //        button.disable();
+    //        job = selectedRecords[0];
+    //        ignoredJob = Ext.create("EVEInDust.model.IgnoredJob",{
+    //            jobId: job.get("jobId")
+    //        });
+    //        grid.setLoading(true);
+    //        ignoredJob.save({
+    //            success: function(){
+    //
+    //            },
+    //            failure: function(){
+    //                Ext.Msg.alert("Ошибка","Не удалось добавить работу в список игнорируемых");
+    //            },
+    //            callback: function(){
+    //                grid.setLoading(false);
+    //                button.enable();
+    //                grid.getStore().load();
+    //            }
+    //        })
+    //    } else {
+    //        Ext.Msg.alert("Ошибка", "Не выбрана запись для обработки");
+    //    }
+    //},
     onSelectionChangeInAssociatedJobsGrid: function(associatedJobsGrid, selectedItems) {
         var grid = this.lookupReference("associatedJobs-grid");
         if(selectedItems.length === 0) {
@@ -472,5 +472,75 @@ Ext.define('EVEInDust.view.orderCreator.OrderCreatorController', {
             grid.down('button[action="link"]').enable();
             grid.down('button[action="ignore"]').enable();
         }
-    }
+    },
+    onClickIgnoreJobButton: function (button) {
+        var i, selectedJobs,
+            jobIds = [], length,
+            notAssociatedJobsGrid = this.lookupReference("notAssociatedJobs-grid")
+            ;
+        button.disable();
+        selectedJobs = notAssociatedJobsGrid.getSelection();
+        length = selectedJobs.length;
+        for(i = 0; i < length;i++) {
+            jobIds.push(selectedJobs[i].get("jobId"));
+        }
+
+        this.saveAnyAmountOfIgnoredJobs(jobIds,function(){
+            notAssociatedJobsGrid.getStore().load();
+            button.enable();
+        });
+    },
+    /**
+     *
+     * @param jobIds
+     * @param callback
+     */
+    saveAnyAmountOfIgnoredJobs: function(jobIds, callback){
+        var progress, saver;
+
+        if(jobIds.length > 0) {
+            progress = Ext.Msg.show({
+                title: "Занесение в список игнорирования",
+                message: "Занесение в список #"+jobIds[0],
+                progressText: "1 из "+jobIds.length,
+                progress: true,
+                closable: false,
+                modal: true
+            });
+            saver = function saver(jobIdIndex){
+                var ignoredJob;
+                if(jobIdIndex < jobIds.length) {
+                    ignoredJob = Ext.create("EVEInDust.model.IgnoredJob",{
+                        jobId: jobIds[jobIdIndex]
+                    });
+
+                    var indexForHumans = (jobIdIndex+1);
+                    progress.updateProgress(indexForHumans/jobIds.length,indexForHumans+" из "+jobIds.length,"Занесение в список #"+jobIds[jobIdIndex]);
+
+                    ignoredJob.save({
+                        success: function () {
+                            saver(jobIdIndex+1);
+                        },
+                        failure: function(){
+                            progress.close();
+                            Ext.Msg.show({
+                                title: "Ошибка",
+                                msg: "Не удалось добавить в игнор все работы. Проблема с работой #"+jobIds[jobIdIndex],
+                                icon: Ext.Msg.ERROR,
+                                buttons: Ext.Msg.OK
+                            });
+                            callback();
+                        }
+                    });
+                } else {
+                    progress.close();
+                    callback();
+                }
+            };
+            saver(0);
+        } else {
+            callback();
+        }
+
+    },
 });

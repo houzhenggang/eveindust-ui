@@ -8,20 +8,20 @@ Ext.define('EVEInDust.view.orderCreator.OrderCreatorController', {
         "EVEInDust.model.sde.IndustryActivityProduct"
     ],
     alias: 'controller.OrderCreator',
-    onClickCreateOrderButton: function(){
+    onClickCreateOrderButton: function () {
         var ordersGrid = this.lookupReference("orders-grid"),
             order = new EVEInDust.model.Order()
-        ;
+            ;
         order.setStatus(Ext.getStore("OrderStatuses").getById(1));
         ordersGrid.getSelectionModel().deselectAll();
-        ordersGrid.getStore().insert(0, [order]);
-        ordersGrid.findPlugin("rowediting").startEdit(order,0);
+        this.startEditWithRowEditingPlugin(ordersGrid, order);
     },
-    onClickCloseOrderButton: function(){
+    onClickCloseOrderButton: function () {
         var ordersGrid = this.lookupReference('orders-grid'),
             order = ordersGrid.getSelection()[0]
             ;
 
+        // прячем все таблицы, т.к. при закрытии заказа, оный исчезнет и будет странно, если после него останутся данные
         this.lookupReference("items-grid").hide();
         this.lookupReference("associatedJobs-grid").hide();
         this.lookupReference("notAssociatedJobs-grid").hide();
@@ -30,48 +30,49 @@ Ext.define('EVEInDust.view.orderCreator.OrderCreatorController', {
         ordersGrid.setLoading(true);
         order.setStatus(Ext.getStore("OrderStatuses").getById(EVEInDust.common.OrderStatuses.WaitingForProduce));
         order.save({
-            success: function(){
+            success: function () {
                 ordersGrid.getStore().load();
             },
-            failure: function(){
+            failure: function () {
                 order.reject();
             },
-            callback: function(){
+            callback: function () {
                 ordersGrid.setLoading(false);
             }
         })
     },
     onEditOrderRowComplete: EVEInDust.Common.onEditModelRowComplete(),
     onCancelEditOrderRow: EVEInDust.Common.onCancelEditModelRow,
-    onClickDeleteOrderButton: function(){
-        EVEInDust.Common.deleteSelectedItemInGrid(this.lookupReference("orders-grid"),"Удаление заказа не удалось");
+    onClickDeleteOrderButton: function () {
+        EVEInDust.Common.deleteSelectedItemInGrid(this.lookupReference("orders-grid"), "Удаление заказа не удалось");
     },
-    onItemClickInOrdersGrid: function(ordersGrid, order) {
+    onItemClickInOrdersGrid: function (ordersGrid, order) {
         var itemsGrid = this.lookupReference("items-grid"),
             loadAnotherOrderData = true,
             filters, orderIdOfLoadingStore
-        ;
+            ;
 
-        // показываем таблицу с предметами принеобходимости
-        if(itemsGrid.isHidden()){
+        // показываем таблицу с предметами при необходимости
+        if (itemsGrid.isHidden()) {
             itemsGrid.show();
         }
 
         // проверяем не задан ли тот же фильтр, что хотим задать мы. Т.о. предотвращаем повторную загрузку одних и
         // тех же данных
         filters = itemsGrid.getStore().getFilters();
-        if(filters.count() > 0 && filters.containsKey("order") && filters.get("order").getValue() === order.getId()) {
+        if (filters.count() > 0 && filters.containsKey("order") && filters.get("order").getValue() === order.getId()) {
             loadAnotherOrderData = false;
         }
 
-        if(loadAnotherOrderData) {
-            if(itemsGrid.getStore().isLoading()) {
+        if (loadAnotherOrderData) {
+            // предотвращаем возможность частой загрузки данных, т.к. это может привести к недостоверным данным в таблицах
+            if (itemsGrid.getStore().isLoading()) {
                 orderIdOfLoadingStore = filters.get("order").getValue();
-                Ext.Msg.alert("Не торопитесь","Дождитесь загрузки заказа #"+orderIdOfLoadingStore+" прежде чем загружать заказ #"+order.getId());
+                Ext.Msg.alert("Не торопитесь", "Дождитесь загрузки заказа #" + orderIdOfLoadingStore + " прежде чем загружать заказ #" + order.getId());
                 ordersGrid.getSelectionModel().select(ordersGrid.getStore().getById(orderIdOfLoadingStore))
             } else {
                 // т.к. в таблицу с предметами будут загружаться новые данные, то в связи с этим необходимо
-                // спрятать таблицы с работами
+                // спрятать таблицы, которые относятся к определенному товару
                 this.lookupReference("associatedJobs-grid").hide();
                 this.lookupReference("notAssociatedJobs-grid").hide();
                 this.lookupReference("plannedJobs-grid").hide();
@@ -84,49 +85,56 @@ Ext.define('EVEInDust.view.orderCreator.OrderCreatorController', {
             }
         }
     },
-    onSelectionChangeInOrdersGrid: function(ordersGrid, selectedItems){
-        if(selectedItems.length === 0) {
+    onSelectionChangeInOrdersGrid: function (grid, selectedItems) {
+        var ordersGrid = this.lookupReference('orders-grid');
+        if (selectedItems.length === 0) {
             this.lookupReference("items-grid").hide();
             this.lookupReference("associatedJobs-grid").hide();
             this.lookupReference("notAssociatedJobs-grid").hide();
             this.lookupReference("plannedJobs-grid").hide();
 
-            this.lookupReference('orders-grid').down('button[action="remove"]').disable();
-            this.lookupReference('orders-grid').down('button[action="close"]').disable();
+            ordersGrid.down('button[action="remove"]').disable();
+            ordersGrid.down('button[action="close"]').disable();
         } else {
-            this.lookupReference('orders-grid').down('button[action="remove"]').enable();
-            this.lookupReference('orders-grid').down('button[action="close"]').enable();
+            ordersGrid.down('button[action="remove"]').enable();
+            ordersGrid.down('button[action="close"]').enable();
         }
     },
-    onClickCreateItem: function(){
+    onClickCreateItem: function () {
         var itemsGrid = this.lookupReference("items-grid"),
             item = new EVEInDust.model.Item()
-        ;
+            ;
         item.setOrder(this.lookupReference("orders-grid").getSelection()[0]);
         itemsGrid.getSelectionModel().deselectAll();
-        itemsGrid.getStore().insert(0, [item]);
-        itemsGrid.findPlugin("rowediting").startEdit(item,0);
+        this.startEditWithRowEditingPlugin(itemsGrid, item);
     },
-    onClickDeleteItemItem: function(){
-        EVEInDust.Common.deleteSelectedItemInGrid(this.lookupReference("items-grid"),"Удаление товара для производства не удалось");
+    startEditWithRowEditingPlugin: function (grid, record) {
+        grid.getStore().insert(0, [record]);
+        grid.findPlugin("rowediting").startEdit(record, 0);
+    },
+    onClickDeleteItem: function () {
+        EVEInDust.Common.deleteSelectedItemInGrid(this.lookupReference("items-grid"), "Удаление товара для производства не удалось");
     },
     onCancelEditItemRow: EVEInDust.Common.onCancelEditModelRow,
-    onEditItemRowComplete: function(editor, context){
+    onEditItemRowComplete: function (editor, context) {
         var clickOnItemAfterSave = false,
             itemsGrid = this.lookupReference("items-grid"),
             record = context.record
-        ;
-        if(record.phantom) {
+            ;
+
+        if (record.phantom) {
             clickOnItemAfterSave = true;
         }
+
         record.save({
-            success: function(){
+            success: function () {
                 record.commit();
-                if(clickOnItemAfterSave) {
-                    itemsGrid.fireEvent("itemclick",itemsGrid,record);
+                // таким образом открываем таблицы для вновь созданного товара
+                if (clickOnItemAfterSave) {
+                    itemsGrid.fireEvent("itemclick", itemsGrid, record);
                 }
             },
-            failure: function(){
+            failure: function () {
                 Ext.Msg.show({
                     title: "Ошибка",
                     msg: "Сохранение записи не удалось",
@@ -136,12 +144,11 @@ Ext.define('EVEInDust.view.orderCreator.OrderCreatorController', {
             }
         });
     },
-    onItemClickInItemGrid: function(itemsGrid, item){
+    onItemClickInItemGrid: function (itemsGrid, item) {
         var associatedJobsGrid = this.lookupReference("associatedJobs-grid"),
             notAssociatedJobsGrid = this.lookupReference("notAssociatedJobs-grid"),
             plannedJobsGrid = this.lookupReference("plannedJobs-grid"),
-            associatedJobsStoreFilters = associatedJobsGrid.getStore().getFilters(),
-            isAssociatedJobsStoreNecessaryLoading = true,
+            associatedJobsStoreFilters, isAssociatedJobsStoreNecessaryLoading, isAssocJobsGridHasSameItemInFilters,
             notAssociatedJobsStoreFilters = notAssociatedJobsGrid.getStore().getFilters(),
             isNotAssociatedJobsStoreNecessaryLoading = true,
             plannedJobsStoreFilters = plannedJobsGrid.getStore().getFilters(),
@@ -149,51 +156,49 @@ Ext.define('EVEInDust.view.orderCreator.OrderCreatorController', {
             itemIdOfLoadingAssociatedJobs,
             industryActivitiesStoreCallback,
             industryActivityProductsStore = this.getViewModel().getStore('industry_activity_products')
-        ;
-        if(item.phantom) {
-            Ext.Msg.alert("Не торопитесь","Простите, но данная запись ещё не занесена в база, надо немного подождать, чтобы начать с ней работать");
+            ;
+        if (item.phantom) {
+            Ext.Msg.alert("Не торопитесь", "Простите, но данная запись ещё не занесена в база, надо немного подождать, чтобы начать с ней работать");
             return;
         }
-        if(associatedJobsGrid.isHidden()){
+
+        // отображаем необходимые таблицы для товара
+        if (associatedJobsGrid.isHidden()) {
             associatedJobsGrid.show();
         }
-        if(notAssociatedJobsGrid.isHidden()) {
+        if (notAssociatedJobsGrid.isHidden()) {
             notAssociatedJobsGrid.show();
         }
-        if(plannedJobsGrid.isHidden()) {
+        if (plannedJobsGrid.isHidden()) {
             plannedJobsGrid.show();
         }
 
-        if(
-            associatedJobsStoreFilters.count() > 0 &&
-                associatedJobsStoreFilters.containsKey("item") &&
-                associatedJobsStoreFilters.get("item").getValue() === item.getId()
-            ) {
-            isAssociatedJobsStoreNecessaryLoading = false;
-        }
-        if(
+
+        isAssociatedJobsStoreNecessaryLoading = !this.isFiltersContain(associatedJobsGrid.getStore(),'item',item.getId());
+        if (
             notAssociatedJobsStoreFilters.count() > 0 &&
-                notAssociatedJobsStoreFilters.containsKey("productTypeId") &&
-                notAssociatedJobsStoreFilters.get("productTypeId").getValue() === item.get("typeId")
-            ) {
+            notAssociatedJobsStoreFilters.containsKey("productTypeId") &&
+            notAssociatedJobsStoreFilters.get("productTypeId").getValue() === item.get("typeId")
+        ) {
             isNotAssociatedJobsStoreNecessaryLoading = false;
         }
-        if(
+        if (
             plannedJobsStoreFilters.count() > 0 &&
-                plannedJobsStoreFilters.containsKey("item") &&
-                plannedJobsStoreFilters.get("item").getValue() === item.getId()
-            ) {
+            plannedJobsStoreFilters.containsKey("item") &&
+            plannedJobsStoreFilters.get("item").getValue() === item.getId()
+        ) {
             isPlannedJobsStoreNecessaryLoading = false;
         }
 
 
-        if( isAssociatedJobsStoreNecessaryLoading || isNotAssociatedJobsStoreNecessaryLoading || isPlannedJobsStoreNecessaryLoading ) {
-            if(associatedJobsGrid.getStore().isLoading() || notAssociatedJobsGrid.getStore().isLoading() || plannedJobsGrid.getStore().isLoading()) {
+        associatedJobsStoreFilters = associatedJobsGrid.getStore().getFilters();
+        if (isAssociatedJobsStoreNecessaryLoading || isNotAssociatedJobsStoreNecessaryLoading || isPlannedJobsStoreNecessaryLoading) {
+            if (associatedJobsGrid.getStore().isLoading() || notAssociatedJobsGrid.getStore().isLoading() || plannedJobsGrid.getStore().isLoading()) {
                 itemIdOfLoadingAssociatedJobs = associatedJobsStoreFilters.get("item").getValue();
-                Ext.Msg.alert("Не торопитесь","Дождитесь загрузки данных о предмете #"+itemIdOfLoadingAssociatedJobs+" прежде чем загружать данные о #"+item.getId());
+                Ext.Msg.alert("Не торопитесь", "Дождитесь загрузки данных о предмете #" + itemIdOfLoadingAssociatedJobs + " прежде чем загружать данные о #" + item.getId());
                 itemsGrid.getSelectionModel().select(itemsGrid.getStore().getById(itemIdOfLoadingAssociatedJobs))
             } else {
-                if(isAssociatedJobsStoreNecessaryLoading) {
+                if (isAssociatedJobsStoreNecessaryLoading) {
                     associatedJobsGrid.getStore().addFilter({
                         id: "item",
                         property: "item",
@@ -201,7 +206,7 @@ Ext.define('EVEInDust.view.orderCreator.OrderCreatorController', {
                     });
                 }
 
-                if(isPlannedJobsStoreNecessaryLoading) {
+                if (isPlannedJobsStoreNecessaryLoading) {
                     plannedJobsGrid.getStore().addFilter([{
                         id: "item",
                         property: "item",
@@ -209,29 +214,29 @@ Ext.define('EVEInDust.view.orderCreator.OrderCreatorController', {
                     }]);
                 }
 
-                if(isNotAssociatedJobsStoreNecessaryLoading) {
+                if (isNotAssociatedJobsStoreNecessaryLoading) {
                     notAssociatedJobsGrid.setLoading(true);
-                    industryActivitiesStoreCallback = function(store, records){
+                    industryActivitiesStoreCallback = function (store, records) {
                         notAssociatedJobsGrid.setLoading(false);
-                        industryActivityProductsStore.un("load",industryActivitiesStoreCallback);
+                        industryActivityProductsStore.un("load", industryActivitiesStoreCallback);
                         notAssociatedJobsGrid.getStore().addFilter([{
                             id: "blueprintTypeId",
                             property: "blueprintTypeId",
                             value: records[0].get("typeId")
-                        },{
+                        }, {
                             id: "activityId",
                             property: "activityId",
                             value: EVEInDust.common.IndustryActivity.Manufacturing
                         }]);
                     };
-                    industryActivityProductsStore.on("load",industryActivitiesStoreCallback)
+                    industryActivityProductsStore.on("load", industryActivitiesStoreCallback)
                 }
 
                 industryActivityProductsStore.addFilter([{
                     id: "productTypeId",
                     property: "productTypeId",
                     value: item.get("typeId")
-                },{
+                }, {
                     id: "activityId",
                     property: "activityId",
                     value: EVEInDust.common.IndustryActivity.Manufacturing
@@ -239,8 +244,14 @@ Ext.define('EVEInDust.view.orderCreator.OrderCreatorController', {
             }
         }
     },
-    onSelectionChangeInItemsGrid: function(itemsGrid, selectedItems) {
-        if(selectedItems.length === 0) {
+    isFiltersContain: function(store, filterId, value){
+        var filters = store.getFilters();
+        return filters.count() > 0
+        && filters.containsKey(filterId)
+        && filters.get(filterId).getValue() === value;
+    },
+    onSelectionChangeInItemsGrid: function (itemsGrid, selectedItems) {
+        if (selectedItems.length === 0) {
             this.lookupReference("associatedJobs-grid").hide();
             this.lookupReference("notAssociatedJobs-grid").hide();
             this.lookupReference("plannedJobs-grid").hide();
@@ -256,14 +267,14 @@ Ext.define('EVEInDust.view.orderCreator.OrderCreatorController', {
             item = this.lookupReference("items-grid").getSelection()[0],
             notAssociatedJobsGrid = this.lookupReference("notAssociatedJobs-grid"),
             me = this
-        ;
+            ;
         button.disable();
         selectedJobs = notAssociatedJobsGrid.getSelection();
-        for(i = 0; i < selectedJobs.length;i++) {
+        for (i = 0; i < selectedJobs.length; i++) {
             jobIds.push(selectedJobs[i].get("jobId"));
         }
 
-        this.saveAnyAmountOfAssociatedJobs(item,jobIds,function(){
+        this.saveAnyAmountOfAssociatedJobs(item, jobIds, function () {
             notAssociatedJobsGrid.getStore().load();
             me.lookupReference("associatedJobs-grid").getStore().load();
             button.enable();
@@ -275,37 +286,37 @@ Ext.define('EVEInDust.view.orderCreator.OrderCreatorController', {
      * @param jobIds
      * @param callback
      */
-    saveAnyAmountOfAssociatedJobs: function(item, jobIds, callback){
+    saveAnyAmountOfAssociatedJobs: function (item, jobIds, callback) {
         var progress, saver;
 
-        if(jobIds.length > 0) {
+        if (jobIds.length > 0) {
             progress = Ext.Msg.show({
                 title: "Привязывание работ",
-                message: "Привязывание работы #"+jobIds[0],
-                progressText: "1 из "+jobIds.length,
+                message: "Привязывание работы #" + jobIds[0],
+                progressText: "1 из " + jobIds.length,
                 progress: true,
                 closable: false,
                 modal: true
             });
-            saver = function saver(jobIdIndex){
+            saver = function saver(jobIdIndex) {
                 var association;
-                if(jobIdIndex < jobIds.length) {
+                if (jobIdIndex < jobIds.length) {
                     association = new EVEInDust.model.IndJobToProducingItemAssociation();
                     association.setItem(item);
-                    association.set("jobId",jobIds[jobIdIndex]);
+                    association.set("jobId", jobIds[jobIdIndex]);
 
-                    var indexForHumans = (jobIdIndex+1);
-                    progress.updateProgress(indexForHumans/jobIds.length,indexForHumans+" из "+jobIds.length,"Привязывание работы #"+jobIds[jobIdIndex]);
+                    var indexForHumans = (jobIdIndex + 1);
+                    progress.updateProgress(indexForHumans / jobIds.length, indexForHumans + " из " + jobIds.length, "Привязывание работы #" + jobIds[jobIdIndex]);
 
                     association.save({
                         success: function () {
-                            saver(jobIdIndex+1);
+                            saver(jobIdIndex + 1);
                         },
-                        failure: function(){
+                        failure: function () {
                             progress.close();
                             Ext.Msg.show({
                                 title: "Ошибка",
-                                msg: "Не удалось связать все работы. Проблема с работой #"+jobIds[jobIdIndex],
+                                msg: "Не удалось связать все работы. Проблема с работой #" + jobIds[jobIdIndex],
                                 icon: Ext.Msg.ERROR,
                                 buttons: Ext.Msg.OK
                             });
@@ -323,16 +334,16 @@ Ext.define('EVEInDust.view.orderCreator.OrderCreatorController', {
         }
 
     },
-    onClickDisassociateJobFromProducingItemButton: function(button) {
+    onClickDisassociateJobFromProducingItemButton: function (button) {
         var store,
             me = this,
             associatedJobsGrid = this.lookupReference("associatedJobs-grid")
-        ;
+            ;
         button.disable();
         associatedJobsGrid.setLoading(true);
 
         // Я пока не знаю как загрузить необходимую сущность по-другому... реализовывать аякс запрос мне не очень хочется, так проще...
-        store = Ext.create(Ext.data.Store,{
+        store = Ext.create(Ext.data.Store, {
             model: 'EVEInDust.model.IndJobToProducingItemAssociation',
             remoteFilter: true,
             filters: [{
@@ -342,7 +353,7 @@ Ext.define('EVEInDust.view.orderCreator.OrderCreatorController', {
             }]
         });
         store.load(function (records, operation, success) {
-            if(success) {
+            if (success) {
                 records[0].erase({
                     success: function () {
                         associatedJobsGrid.setLoading(false);
@@ -374,26 +385,26 @@ Ext.define('EVEInDust.view.orderCreator.OrderCreatorController', {
             }
         });
     },
-    onClickCreatePlannedJobButton: function(){
+    onClickCreatePlannedJobButton: function () {
         var win = Ext.create("EVEInDust.view.orderCreator.CreatePlannedJobForm"),
             comboBoxInForm, storeWithBPCs, blueprintTypeId
-        ;
+            ;
 
         this.getView().add(win);
         comboBoxInForm = this.lookupReference("createPlannedJobForm_bpccombo");
         comboBoxInForm.disable();
 
-        blueprintTypeId = this.getViewModel().getStore('industry_activity_products').find("productTypeId",this.lookupReference("items-grid").getSelection()[0].get("typeId"));
-        storeWithBPCs = Ext.create("Ext.data.Store",{
+        blueprintTypeId = this.getViewModel().getStore('industry_activity_products').find("productTypeId", this.lookupReference("items-grid").getSelection()[0].get("typeId"));
+        storeWithBPCs = Ext.create("Ext.data.Store", {
             model: "EVEInDust.model.yapeal.CorpBlueprint",
             remoteFilter: true,
             pageSize: 0,
             filters: [{
-                id:"runs",
+                id: "runs",
                 property: "runs",
                 value: "-1",
                 operator: "!="
-            },{
+            }, {
                 id: "typeId",
                 property: "typeId",
                 value: blueprintTypeId
@@ -403,21 +414,21 @@ Ext.define('EVEInDust.view.orderCreator.OrderCreatorController', {
         comboBoxInForm.enable();
         win.show();
     },
-    onClickSavePlannedJob: function(){
+    onClickSavePlannedJob: function () {
         var formCmp = this.lookupReference("createPlannedJobForm"),
             form = formCmp.getForm(),
             plannedJob
-        ;
+            ;
         if (form.isValid()) {
-            if(formCmp.getRecord()) {
+            if (formCmp.getRecord()) {
 
             } else {
                 plannedJob = Ext.create("EVEInDust.model.PlannedJob");
                 formCmp.updateRecord(plannedJob);
-                plannedJob.set("item_id",this.lookupReference("items-grid").getSelection()[0].getId());
+                plannedJob.set("item_id", this.lookupReference("items-grid").getSelection()[0].getId());
                 plannedJob.save({
-                    callback: function(records, operaion, isSuccess){
-                        if(isSuccess)
+                    callback: function (records, operaion, isSuccess) {
+                        if (isSuccess)
                             console.log("success");
                         else
                             console.log("failure");
@@ -455,17 +466,17 @@ Ext.define('EVEInDust.view.orderCreator.OrderCreatorController', {
     //        Ext.Msg.alert("Ошибка", "Не выбрана запись для обработки");
     //    }
     //},
-    onSelectionChangeInAssociatedJobsGrid: function(associatedJobsGrid, selectedItems) {
+    onSelectionChangeInAssociatedJobsGrid: function (associatedJobsGrid, selectedItems) {
         var grid = this.lookupReference("associatedJobs-grid");
-        if(selectedItems.length === 0) {
+        if (selectedItems.length === 0) {
             grid.down('button[action="unlink"]').disable();
         } else {
             grid.down('button[action="unlink"]').enable();
         }
     },
-    onSelectionChangeInNotAssociatedJobsGrid: function(associatedJobsGrid, selectedItems) {
+    onSelectionChangeInNotAssociatedJobsGrid: function (associatedJobsGrid, selectedItems) {
         var grid = this.lookupReference("notAssociatedJobs-grid");
-        if(selectedItems.length === 0) {
+        if (selectedItems.length === 0) {
             grid.down('button[action="link"]').disable();
             grid.down('button[action="ignore"]').disable();
         } else {
@@ -481,11 +492,11 @@ Ext.define('EVEInDust.view.orderCreator.OrderCreatorController', {
         button.disable();
         selectedJobs = notAssociatedJobsGrid.getSelection();
         length = selectedJobs.length;
-        for(i = 0; i < length;i++) {
+        for (i = 0; i < length; i++) {
             jobIds.push(selectedJobs[i].get("jobId"));
         }
 
-        this.saveAnyAmountOfIgnoredJobs(jobIds,function(){
+        this.saveAnyAmountOfIgnoredJobs(jobIds, function () {
             notAssociatedJobsGrid.getStore().load();
             button.enable();
         });
@@ -495,37 +506,37 @@ Ext.define('EVEInDust.view.orderCreator.OrderCreatorController', {
      * @param jobIds
      * @param callback
      */
-    saveAnyAmountOfIgnoredJobs: function(jobIds, callback){
+    saveAnyAmountOfIgnoredJobs: function (jobIds, callback) {
         var progress, saver;
 
-        if(jobIds.length > 0) {
+        if (jobIds.length > 0) {
             progress = Ext.Msg.show({
                 title: "Занесение в список игнорирования",
-                message: "Занесение в список #"+jobIds[0],
-                progressText: "1 из "+jobIds.length,
+                message: "Занесение в список #" + jobIds[0],
+                progressText: "1 из " + jobIds.length,
                 progress: true,
                 closable: false,
                 modal: true
             });
-            saver = function saver(jobIdIndex){
+            saver = function saver(jobIdIndex) {
                 var ignoredJob;
-                if(jobIdIndex < jobIds.length) {
-                    ignoredJob = Ext.create("EVEInDust.model.IgnoredJob",{
+                if (jobIdIndex < jobIds.length) {
+                    ignoredJob = Ext.create("EVEInDust.model.IgnoredJob", {
                         jobId: jobIds[jobIdIndex]
                     });
 
-                    var indexForHumans = (jobIdIndex+1);
-                    progress.updateProgress(indexForHumans/jobIds.length,indexForHumans+" из "+jobIds.length,"Занесение в список #"+jobIds[jobIdIndex]);
+                    var indexForHumans = (jobIdIndex + 1);
+                    progress.updateProgress(indexForHumans / jobIds.length, indexForHumans + " из " + jobIds.length, "Занесение в список #" + jobIds[jobIdIndex]);
 
                     ignoredJob.save({
                         success: function () {
-                            saver(jobIdIndex+1);
+                            saver(jobIdIndex + 1);
                         },
-                        failure: function(){
+                        failure: function () {
                             progress.close();
                             Ext.Msg.show({
                                 title: "Ошибка",
-                                msg: "Не удалось добавить в игнор все работы. Проблема с работой #"+jobIds[jobIdIndex],
+                                msg: "Не удалось добавить в игнор все работы. Проблема с работой #" + jobIds[jobIdIndex],
                                 icon: Ext.Msg.ERROR,
                                 buttons: Ext.Msg.OK
                             });

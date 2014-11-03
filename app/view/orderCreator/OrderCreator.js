@@ -136,7 +136,7 @@ Ext.define("EVEInDust.view.orderCreator.OrderCreator",{
                     action: "create"
                 },{
                     text: "Удалить",
-                    handler: "onClickDeleteItemItem",
+                    handler: "onClickDeleteItem",
                     action: "remove",
                     disabled: true
                 },{
@@ -193,6 +193,15 @@ Ext.define("EVEInDust.view.orderCreator.OrderCreator",{
             flex: 1,
             title: "Привязанные работы",
             hidden: true,
+            viewConfig: {
+                stripeRows: false,
+                getRowClass: function (job) {
+                    if (+job.get('completedCharacterId') === 0)
+                        return "little-yellow";
+                    else
+                        return "little-green";
+                }
+            },
             tbar: {
                 items:[{
                     text: "Отвязать",
@@ -300,6 +309,15 @@ Ext.define("EVEInDust.view.orderCreator.OrderCreator",{
         title: "Непривязанные работы",
         hidden: true,
         reference: "notAssociatedJobs-grid",
+        viewConfig: {
+            stripeRows: false,
+            getRowClass: function (job) {
+                if (+job.get('completedCharacterId') === 0)
+                    return "little-yellow";
+                else
+                    return "little-green";
+            }
+        },
         tbar: {
             items:[{
                 text: "Привязать",

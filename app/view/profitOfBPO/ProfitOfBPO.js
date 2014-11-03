@@ -51,7 +51,7 @@ Ext.define("EVEInDust.view.profitOfBPO.ProfitOfBPO", {
             stripeRows: false,
             getRowClass: function(record) {
                 if(+record.get("profitPerHour") < 0) {
-                    return "red";
+                    return "little-red";
                 } else {
                     return "little-green";
                 }

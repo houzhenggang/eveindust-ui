@@ -45,7 +45,7 @@ Ext.define("EVEInDust.view.charactersMonitor.CharactersMonitor", {
                     +record.get("overallOccupiedManufactureSlots") < +record.get("overallManufactureSlots") ||
                     +record.get("overallOccupiedScienceSlots") < +record.get("overallScienceSlots")
                 ) {
-                    return "red";
+                    return "little-red";
                 } else {
                     return "little-green";
                 }

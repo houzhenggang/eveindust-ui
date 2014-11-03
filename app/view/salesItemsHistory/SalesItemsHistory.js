@@ -81,7 +81,7 @@ Ext.define("EVEInDust.view.salesItemsHistory.SalesItemsHistory", {
                 var percent;
                 percent = (item.get("income") / item.get("overallExpenses") - 1) * 100;
                 if (percent < 0)
-                    return "red";
+                    return "little-red";
                 else
                     return "little-green";
             }

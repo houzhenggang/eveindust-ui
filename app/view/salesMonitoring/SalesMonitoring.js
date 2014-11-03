@@ -136,7 +136,7 @@ Ext.define("EVEInDust.view.salesMonitoring.SalesMonitoring", {
                 if (item.get("isSoldOut")) {
                     percent = (item.get("income") / item.get("overallExpenses") - 1) * 100;
                     if (percent < 0)
-                        return "red";
+                        return "little-red";
                     else
                         return "little-green";
                 } else {

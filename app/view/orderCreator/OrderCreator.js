@@ -32,9 +32,13 @@ Ext.define("EVEInDust.view.orderCreator.OrderCreator",{
             xtype: "grid",
             title: "Заказы",
             reference: "orders-grid",
+            tools: [{
+                type: 'help'
+            }],
             plugins: [{
                 ptype: 'rowediting',
                 clicksToEdit: 2,
+                errorSummary: false,
                 listeners: {
                     edit: 'onEditOrderRowComplete',
                     canceledit: 'onCancelEditOrderRow'
@@ -110,7 +114,8 @@ Ext.define("EVEInDust.view.orderCreator.OrderCreator",{
                     displayField: 'name',
                     valueField: 'stationId',
                     forceSelection: true,
-                    typeAhead: true
+                    typeAhead: true,
+                    msgTarget: 'none'
                 }
             }]
         },{
@@ -124,9 +129,13 @@ Ext.define("EVEInDust.view.orderCreator.OrderCreator",{
                 remoteFilter: true,
                 pageSize: 0
             },
+            tools: [{
+                type: 'help'
+            }],
             plugins: [{
                 ptype: 'rowediting',
                 clicksToEdit: 2,
+                errorSummary: false,
                 listeners: {
                     edit: 'onEditItemRowComplete',
                     canceledit: 'onCancelEditItemRow'
@@ -172,7 +181,9 @@ Ext.define("EVEInDust.view.orderCreator.OrderCreator",{
                     valueField: 'typeId',
                     forceSelection: true,
                     typeAhead: true,
-                    hideTrigger: true
+                    hideTrigger: true,
+                    msgTarget: 'none',
+                    allowBlank: false
                 }
             },{
                 header: "В произв-ве",
@@ -197,6 +208,9 @@ Ext.define("EVEInDust.view.orderCreator.OrderCreator",{
         items: [{
             xtype: "grid",
             flex: 1,
+            tools: [{
+                type: 'help'
+            }],
             title: "Привязанные работы",
             hidden: true,
             viewConfig: {
@@ -273,6 +287,9 @@ Ext.define("EVEInDust.view.orderCreator.OrderCreator",{
             xtype: "grid",
             title: "План",
             flex: 1,
+            tools: [{
+                type: 'help'
+            }],
             hidden:true,
             reference: "plannedJobs-grid",
             store: {
@@ -316,6 +333,9 @@ Ext.define("EVEInDust.view.orderCreator.OrderCreator",{
         flex: 1,
         title: "Непривязанные работы",
         hidden: true,
+        tools: [{
+            type: 'help'
+        }],
         reference: "notAssociatedJobs-grid",
         viewConfig: {
             stripeRows: false,
